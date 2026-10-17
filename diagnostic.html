@@ -3,119 +3,495 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta name="robots" content="noindex"/>
 <meta name="theme-color" content="#07030f"/>
-<title>Pinsave Route Test</title>
+<title>Pinsave — Pinterest Video, Image &amp; GIF Downloader</title>
+<meta name="description" content="Paste a Pinterest or pin.it link and save the video, image or GIF in the best quality available. Free, no signup, works on phone and desktop."/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Pinsave — Pinterest Video, Image &amp; GIF Downloader"/>
+<meta property="og:description" content="Paste a Pinterest or pin.it link and save the video, image or GIF. Free, no signup."/>
+<meta name="twitter:card" content="summary"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff2d55'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='18' fill='url(%23g)'/%3E%3Cpath d='M32 14v22m0 0l-9-9m9 9l9-9M18 46h28' stroke='white' stroke-width='5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<script>document.documentElement.classList.add('js');</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
-:root{--red:#ff2d55;--pink:#ff5fa2;--violet:#8b5cf6;--cyan:#22d3ee;--amber:#fbbf24;--green:#34d399;
-  --bg:#07030f;--panel:rgba(255,255,255,.05);--line:rgba(255,255,255,.1);--dim:#b3abc9;--mut:#7d7596;
-  --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace}
-html{-webkit-text-size-adjust:100%}
-body{font-family:var(--font);color:#fff;background:var(--bg);min-height:100vh;line-height:1.5;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;z-index:-1;
-  background:radial-gradient(ellipse 70% 50% at 20% -10%,rgba(255,45,85,.28),transparent 60%),
-             radial-gradient(ellipse 60% 45% at 100% 20%,rgba(139,92,246,.25),transparent 60%),
-             radial-gradient(ellipse 60% 40% at 0% 100%,rgba(34,211,238,.16),transparent 60%);
-  background-size:140% 140%;animation:bg 14s ease-in-out infinite alternate}
-@keyframes bg{from{background-position:0% 0%}to{background-position:100% 100%}}
-.wrap{max-width:760px;margin:0 auto;padding:26px 18px 70px}
-h1{font-size:clamp(26px,6vw,36px);letter-spacing:-.02em;margin-bottom:8px;
-  background:linear-gradient(90deg,var(--red),var(--pink),var(--violet),var(--cyan),var(--red));background-size:300% 100%;
-  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:hue 8s linear infinite}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+:root{
+  --red:#ff2d55; --pink:#ff5fa2; --violet:#8b5cf6; --cyan:#22d3ee; --amber:#fbbf24; --lime:#a3e635; --green:#34d399;
+  --bg:#07030f; --panel:rgba(255,255,255,.05); --line:rgba(255,255,255,.1);
+  --txt:#fff; --dim:#b3abc9; --mut:#7d7596;
+  --display:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --rainbow:linear-gradient(90deg,var(--red),var(--pink),var(--violet),var(--cyan),var(--red));
+}
+body{font-family:var(--body);color:var(--txt);background:var(--bg);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.5}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-.125em}
+
+/* ───── background ───── */
+.aurora{position:fixed;inset:0;z-index:-3;background:
+  radial-gradient(ellipse 80% 55% at 50% -10%,rgba(255,45,85,.24),transparent 60%),
+  radial-gradient(ellipse 60% 45% at 100% 30%,rgba(139,92,246,.22),transparent 60%),
+  radial-gradient(ellipse 55% 40% at 0% 70%,rgba(34,211,238,.14),transparent 60%),
+  radial-gradient(ellipse 60% 40% at 80% 100%,rgba(255,95,162,.15),transparent 60%),var(--bg);
+  background-size:130% 130%;animation:auroraShift 16s ease-in-out infinite alternate}
+@keyframes auroraShift{from{background-position:0% 0%}to{background-position:100% 100%}}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);z-index:-2;pointer-events:none;opacity:.42;animation:drift 20s ease-in-out infinite;will-change:transform}
+.b1{width:420px;height:420px;background:var(--red);top:-150px;left:-120px}
+.b2{width:380px;height:380px;background:var(--violet);bottom:-130px;right:-100px;animation-delay:-7s}
+.b3{width:280px;height:280px;background:var(--cyan);top:48%;left:60%;opacity:.18;animation-delay:-13s}
+@keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}33%{transform:translate3d(60px,-50px,0) scale(1.12)}66%{transform:translate3d(-45px,45px,0) scale(.94)}}
+.grain{position:fixed;inset:0;z-index:-1;opacity:.03;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* ───── nav + hero ───── */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.02em}
+.logo-mark{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;background:linear-gradient(135deg,var(--red),var(--violet));
+  box-shadow:0 8px 28px rgba(255,45,85,.4),inset 0 1px 0 rgba(255,255,255,.3);animation:logoGlow 3.5s ease-in-out infinite}
+@keyframes logoGlow{0%,100%{box-shadow:0 8px 26px rgba(255,45,85,.4),inset 0 1px 0 rgba(255,255,255,.3)}50%{box-shadow:0 8px 38px rgba(139,92,246,.7),inset 0 1px 0 rgba(255,255,255,.3)}}
+.nav-pill{display:flex;align-items:center;gap:8px;padding:8px 15px;border-radius:999px;font-size:12.5px;font-weight:500;color:var(--dim);
+  background:var(--panel);border:1px solid var(--line)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.hero{text-align:center;padding:44px 0 6px}
+.reveal{opacity:0;transform:translateY(24px);animation:rise .9s cubic-bezier(.16,1,.3,1) forwards;animation-delay:var(--d,0s)}
+@keyframes rise{to{opacity:1;transform:none}}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 18px;border-radius:999px;margin-bottom:22px;
+  background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.38);color:#cdb8ff;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,7.6vw,74px);line-height:1.04;letter-spacing:-.035em;margin-bottom:18px}
+.grad{background:var(--rainbow);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:hue 7s linear infinite}
 @keyframes hue{to{background-position:300% 0}}
-.lead{color:var(--dim);font-size:15px;margin-bottom:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;backdrop-filter:blur(10px)}
-.banner{border-radius:14px;padding:13px 15px;font-size:14px;margin-bottom:16px;border:1px solid}
-.banner.warn{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);color:#ffe3a6}
-label{display:block;font-size:13px;color:var(--dim);margin:12px 0 6px;font-weight:600}
-input[type=text],input[type=url],textarea{width:100%;padding:14px;border-radius:13px;border:1.5px solid var(--line);background:rgba(0,0,0,.4);color:#fff;font:16px var(--font);outline:none}
-input:focus,textarea:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,95,162,.18)}
-textarea{font:12px/1.5 var(--mono);min-height:150px;resize:vertical}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;color:#fff;font:700 16px var(--font);padding:15px 22px;border-radius:14px;
-  background:linear-gradient(120deg,var(--red),var(--pink),var(--violet));box-shadow:0 10px 28px rgba(255,45,85,.35);transition:transform .2s,opacity .2s}
-.btn:hover:not(:disabled){transform:translateY(-2px)}
+.sub{max-width:620px;margin:0 auto;font-size:clamp(15.5px,2.2vw,18.5px);line-height:1.7;color:var(--dim)}
+.sub b{color:#efeaff;font-weight:600}
+.pills{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border-radius:999px;font:600 13px var(--body);color:#fff;
+  background:color-mix(in srgb,var(--c) 16%,transparent);border:1px solid color-mix(in srgb,var(--c) 45%,transparent);animation:float 5s ease-in-out infinite;animation-delay:var(--fd,0s)}
+.pill .i{color:var(--c)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.art{display:block;width:min(340px,86vw);height:auto;margin:26px auto 0;overflow:visible}
+.art .fl{transform-box:fill-box;transform-origin:center;animation:float 6s ease-in-out infinite}
+.art .fl2{animation-delay:-2s;animation-duration:7s}
+.art .fl3{animation-delay:-4s;animation-duration:6.5s}
+.art .badge{transform-box:fill-box;transform-origin:center;animation:badgePulse 2.4s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* ───── main card ───── */
+.card-shell{position:relative;border-radius:30px;padding:1.5px;overflow:hidden;isolation:isolate;margin-top:26px;
+  background:linear-gradient(135deg,rgba(255,45,85,.55),rgba(139,92,246,.45),rgba(34,211,238,.4))}
+.card-shell::before{content:"";position:absolute;inset:-160%;z-index:0;
+  background:conic-gradient(from 0deg,transparent 0 280deg,var(--red) 312deg,var(--violet) 330deg,var(--cyan) 346deg,transparent 360deg);animation:spinB 6s linear infinite}
+@keyframes spinB{to{transform:rotate(360deg)}}
+.card{position:relative;z-index:1;border-radius:28.5px;padding:clamp(20px,4vw,38px);
+  background:linear-gradient(180deg,rgba(24,15,40,.96),rgba(12,7,24,.98));box-shadow:0 40px 90px rgba(0,0,0,.55)}
+
+.field{display:flex;gap:11px}
+.input-wrap{flex:1;position:relative}
+.input-wrap>.i{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:19px;color:var(--mut);pointer-events:none;transition:color .25s}
+.input-wrap:focus-within>.i{color:var(--pink)}
+#pin-url{width:100%;padding:17px 17px 17px 49px;border-radius:16px;font:500 16px var(--body);color:var(--txt);
+  background:rgba(0,0,0,.4);border:1.5px solid var(--line);outline:none;transition:border-color .25s,box-shadow .25s,background .25s}
+#pin-url::placeholder{color:#645c80}
+#pin-url:focus{border-color:var(--pink);background:rgba(0,0,0,.55);box-shadow:0 0 0 4px rgba(255,95,162,.16),0 0 34px rgba(139,92,246,.22)}
+.input-wrap.shake{animation:shake .5s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:9px;overflow:hidden;text-decoration:none;
+  border:none;cursor:pointer;font:600 16px var(--body);color:#fff;border-radius:16px;padding:0 26px;min-height:56px;
+  transition:transform .25s,box-shadow .25s,opacity .25s,background .25s}
+.btn .i{font-size:18px}
+.btn-primary{background:linear-gradient(120deg,var(--red) 0%,var(--pink) 45%,var(--violet) 100%);background-size:160% 100%;box-shadow:0 10px 30px rgba(255,45,85,.38),inset 0 1px 0 rgba(255,255,255,.25);animation:btnFlow 5s ease-in-out infinite alternate}
+@keyframes btnFlow{from{background-position:0% 0}to{background-position:100% 0}}
+.btn-primary::after{content:"";position:absolute;top:0;bottom:0;width:46%;left:-60%;transform:skewX(-24deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:shine 4.5s ease-in-out infinite}
+@keyframes shine{0%,60%{left:-60%}100%{left:140%}}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 16px 40px rgba(139,92,246,.5),inset 0 1px 0 rgba(255,255,255,.3)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
-.btn.ghost{background:var(--panel);border:1.5px solid var(--line);box-shadow:none;font-size:14px;padding:11px 16px}
-.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.hint{font-size:12.5px;color:var(--mut);margin-top:6px}
-
-.test{border-radius:16px;border:1px solid var(--line);background:var(--panel);margin-bottom:12px;overflow:hidden;transition:border-color .3s,box-shadow .3s}
-.test.pass{border-color:rgba(52,211,153,.55);box-shadow:0 0 28px rgba(52,211,153,.12)}
-.test.partial{border-color:rgba(251,191,36,.5)}
-.test.fail{border-color:rgba(255,45,85,.4)}
-.test-head{display:flex;gap:12px;align-items:center;padding:14px 16px}
-.test-title{font-weight:700;font-size:15px}
-.test-desc{font-size:12.5px;color:var(--mut);margin-top:2px}
-.test-body{flex:1;min-width:0}
-.chip{flex-shrink:0;font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;border-radius:999px;border:1px solid var(--line);color:var(--mut);display:inline-flex;align-items:center;gap:7px}
-.chip.run{color:#fff;border-color:rgba(139,92,246,.6)}
-.chip.run::before{content:"";width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:var(--pink);animation:spin .7s linear infinite}
+.btn:disabled::after{display:none}
+.btn-spin{width:17px;height:17px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.chip.pass{color:var(--green);border-color:rgba(52,211,153,.55);background:rgba(52,211,153,.12)}
-.chip.partial{color:var(--amber);border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.1)}
-.chip.fail{color:#ff8aa0;border-color:rgba(255,45,85,.5);background:rgba(255,45,85,.1)}
-.chip.skip{color:var(--mut)}
-.bar{height:3px;background:transparent;overflow:hidden}
-.test.running .bar{background:linear-gradient(90deg,transparent,var(--pink),var(--violet),transparent);background-size:40% 100%;background-repeat:no-repeat;animation:slide 1.1s linear infinite}
-@keyframes slide{from{background-position:-40% 0}to{background-position:140% 0}}
-.log{display:none;margin:0 16px 14px;padding:12px;border-radius:11px;background:rgba(0,0,0,.45);font:12px/1.6 var(--mono);color:#cfc8e6;white-space:pre-wrap;word-break:break-all}
-.test.open .log{display:block}
-.test-head{cursor:pointer}
+.ghost-btn{background:rgba(255,255,255,.05);border:1.5px solid var(--line);color:var(--txt);min-height:50px;padding:0 20px;font-size:15px}
+.ghost-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);transform:translateY(-2px)}
 
-.verdict{border-radius:18px;padding:20px;margin:18px 0;border:1.5px solid var(--line);background:var(--panel);animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
-@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
-.verdict.good{border-color:rgba(52,211,153,.6);background:rgba(52,211,153,.08)}
-.verdict.bad{border-color:rgba(255,45,85,.5);background:rgba(255,45,85,.07)}
-.verdict h2{font-size:19px;margin-bottom:6px}
-.verdict p{color:var(--dim);font-size:14.5px}
-details.code{margin-top:6px}
-details.code summary{cursor:pointer;font-weight:700;padding:10px 0;color:#e0c9ff}
-.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);opacity:0;transition:all .4s;background:#18102a;border:1px solid var(--line);padding:12px 18px;border-radius:13px;font-size:14px;z-index:9;max-width:90vw;text-align:center}
+.meta-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:15px;flex-wrap:wrap;font-size:13px;color:var(--mut)}
+.linkish{display:inline-flex;align-items:center;gap:7px;background:none;border:none;color:#e0c9ff;font:500 13px var(--body);cursor:pointer;padding:4px 0;transition:color .2s}
+.linkish:hover{color:var(--pink);text-decoration:underline}
+
+.setup-panel{margin-top:18px;padding:18px;border-radius:16px;background:rgba(139,92,246,.09);border:1px solid rgba(139,92,246,.4);color:#ddd0ff;font-size:13.5px;line-height:1.7}
+.setup-panel h4{font-family:var(--display);color:#fff;font-size:15px;margin-bottom:6px}
+.setup-panel ol{padding-left:20px;margin:8px 0}
+.setup-panel code{background:rgba(0,0,0,.4);padding:1px 6px;border-radius:6px;font-size:12px}
+.setup-panel textarea,.setup-panel input{width:100%;margin-top:10px;background:rgba(0,0,0,.5);color:#b9f5d4;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px;font:400 12px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.setup-panel textarea{height:170px;resize:vertical}
+.setup-panel .row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.setup-panel button{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:11px;border:none;cursor:pointer;font:600 13px var(--body);color:#fff;background:linear-gradient(135deg,var(--violet),var(--pink))}
+
+/* progress */
+.steps{display:flex;align-items:flex-start;justify-content:center;margin-top:30px;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s cubic-bezier(.16,1,.3,1)}
+.steps.show{opacity:1;transform:none}
+.step{display:flex;flex-direction:column;align-items:center;gap:9px;min-width:84px}
+.step-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;position:relative;
+  font:700 13px var(--display);color:var(--mut);background:rgba(255,255,255,.05);border:1px solid var(--line);transition:all .35s}
+.step.active .step-dot{background:linear-gradient(135deg,var(--red),var(--violet));color:#fff;border-color:transparent;box-shadow:0 0 0 6px rgba(139,92,246,.15),0 0 26px rgba(255,45,85,.45)}
+.step.active .step-dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(255,95,162,.55);animation:ripple 1.5s ease-out infinite}
+@keyframes ripple{from{transform:scale(.75);opacity:1}to{transform:scale(1.45);opacity:0}}
+.step.done .step-dot{background:rgba(52,211,153,.16);border-color:rgba(52,211,153,.45);color:var(--green)}
+.step-label{font-size:11px;letter-spacing:.05em;color:var(--mut);transition:color .3s;text-align:center}
+.step.active .step-label{color:#fff}
+.step-line{flex:1;max-width:110px;height:1px;background:rgba(255,255,255,.1);margin:18px 8px 0;position:relative;overflow:hidden}
+.step-line i{position:absolute;inset:0;background:var(--rainbow);transform:scaleX(0);transform-origin:left;transition:transform .7s ease}
+.step-line.filled i{transform:scaleX(1)}
+
+.live-line{display:none;align-items:center;justify-content:center;gap:10px;margin-top:20px;font-size:13.5px;color:var(--dim);flex-wrap:wrap}
+.live-line.show{display:flex}
+.live-text{display:flex;align-items:center;gap:9px;text-align:center}
+.live-text::before{content:"";width:13px;height:13px;flex-shrink:0;border:2px solid rgba(255,255,255,.2);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite}
+.live-line.done .live-text::before{content:"✓";border:none;animation:none;color:var(--green);font-weight:700;width:auto;height:auto;font-size:14px}
+.live-line.warn .live-text::before{content:"!";border:none;animation:none;color:var(--amber);font-weight:700;width:auto;height:auto;font-size:14px}
+.live-time{font-variant-numeric:tabular-nums;color:var(--dim);background:rgba(255,255,255,.05);border:1px solid var(--line);padding:3px 10px;border-radius:999px;font-size:11.5px}
+
+.notice{display:flex;align-items:center;gap:12px;margin-top:22px;padding:15px 17px;border-radius:15px;font-size:14px;line-height:1.55;animation:rise .4s cubic-bezier(.16,1,.3,1)}
+.notice.err{background:rgba(255,45,85,.1);border:1px solid rgba(255,45,85,.35);color:#ffb8c6}
+.notice.warn{background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.38);color:#ffe0a3}
+.notice>.i{font-size:19px}
+.notice span{flex:1}
+.retry-btn{display:inline-flex;align-items:center;gap:7px;flex-shrink:0;border:none;cursor:pointer;padding:10px 18px;border-radius:11px;font:600 13px var(--body);color:#fff;
+  background:linear-gradient(135deg,var(--red),var(--violet));box-shadow:0 6px 18px rgba(255,45,85,.3);transition:transform .2s}
+.retry-btn:hover{transform:translateY(-1px)}
+
+/* result */
+.result{margin-top:28px;opacity:0;transform:translateY(22px) scale(.98);transition:opacity .6s,transform .6s cubic-bezier(.16,1,.3,1)}
+.result.show{opacity:1;transform:none}
+.preview{position:relative;border-radius:20px;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center;
+  min-height:220px;box-shadow:0 26px 60px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.1)}
+.preview video,.preview img{max-width:100%;max-height:min(62vh,500px);display:block}
+.type-chip{position:absolute;top:14px;left:14px;display:inline-flex;align-items:center;gap:7px;
+  padding:7px 13px;border-radius:999px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.16);font:700 10.5px var(--display);letter-spacing:.14em;text-transform:uppercase;color:#fff;animation:chipPop .5s cubic-bezier(.34,1.56,.64,1) .15s backwards}
+@keyframes chipPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+.type-chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink);animation:pulse 1.8s infinite}
+.type-chip.ok::before{background:var(--green);box-shadow:0 0 10px var(--green)}
+.type-chip.warn::before{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+.pin-title{margin-top:16px;font-family:var(--display);font-weight:500;font-size:17px;letter-spacing:-.01em;color:#f1ecff;line-height:1.45;word-break:break-word}
+.pin-sub{margin-top:4px;font-size:12.5px;color:var(--mut)}
+.q-row{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut)}
+.q{border:1.5px solid var(--line);background:rgba(255,255,255,.05);color:#fff;font:600 13px var(--body);padding:7px 14px;border-radius:999px;cursor:pointer;transition:all .2s}
+.q:hover{border-color:rgba(255,95,162,.6)}
+.q.on{background:linear-gradient(120deg,var(--red),var(--violet));border-color:transparent}
+
+.actions{display:flex;gap:11px;margin-top:18px}
+.save-btn{flex:1;min-height:58px;font-size:17px}
+.save-fill{position:absolute;inset:0;width:var(--p,0%);background:rgba(255,255,255,.22);transition:width .25s ease}
+.save-btn>*{position:relative;z-index:1}
+.save-btn.indet .save-fill{width:100%;animation:indet 1.1s linear infinite;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);background-size:50% 100%;background-repeat:no-repeat}
+@keyframes indet{from{background-position:-50% 0}to{background-position:150% 0}}
+.ghost-btn.new{min-height:58px}
+
+.manual{margin-top:16px;padding:18px;border-radius:16px;background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.38);color:#ffe0a3;font-size:14px;line-height:1.7;animation:rise .4s cubic-bezier(.16,1,.3,1)}
+.manual b{color:#fff0d0}
+.manual .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.manual .ghost-btn{flex:1;min-width:130px;color:#fff}
+.manual input{width:100%;margin-top:12px;padding:11px 12px;border-radius:11px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.4);color:#ffe9bd;font:12px ui-monospace,Menlo,Consolas,monospace}
+
+/* ───── ticker ───── */
+.ticker{margin-top:84px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:15px 0;overflow:hidden;position:relative}
+.ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none}
+.ticker::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.ticker::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.ticker-track{display:flex;width:max-content;animation:marquee 30s linear infinite}
+@keyframes marquee{to{transform:translateX(-50%)}}
+.ticker-track span{display:flex;align-items:center;gap:34px;padding-right:34px;white-space:nowrap;font:500 13px var(--display);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.ticker-track b{font-weight:400;color:var(--c)}
+
+/* ───── sections ───── */
+.section{padding-top:92px}
+.sec-head{text-align:center;margin-bottom:42px}
+.sec-head h2{font-family:var(--display);font-weight:700;font-size:clamp(28px,4.6vw,42px);letter-spacing:-.03em;margin-bottom:12px}
+.sec-head p{color:var(--dim);font-size:16px;max-width:540px;margin:0 auto;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.tile{position:relative;padding:28px 24px;border-radius:22px;overflow:hidden;background:var(--panel);border:1px solid var(--line);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),border-color .4s,box-shadow .4s}
+.tile::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 0%,color-mix(in srgb,var(--c) 28%,transparent),transparent 60%);opacity:.7;pointer-events:none}
+.tile:hover{transform:translateY(-7px);border-color:color-mix(in srgb,var(--c) 60%,transparent);box-shadow:0 24px 50px color-mix(in srgb,var(--c) 22%,transparent)}
+.tile>*{position:relative}
+.ico{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;margin-bottom:18px;font-size:23px;
+  background:color-mix(in srgb,var(--c) 20%,transparent);border:1px solid color-mix(in srgb,var(--c) 50%,transparent);color:var(--c)}
+.tile h3{font-family:var(--display);font-size:19px;font-weight:700;margin-bottom:7px;letter-spacing:-.01em}
+.tile p{font-size:14px;color:var(--dim);line-height:1.65}
+.num{position:absolute;top:12px;right:18px;font:700 60px var(--display);color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--c) 45%,transparent);line-height:1}
+
+.faq{max-width:760px;margin:0 auto;display:grid;gap:12px}
+.faq details{border-radius:16px;background:var(--panel);border:1px solid var(--line);transition:border-color .3s,background .3s}
+.faq details[open]{border-color:rgba(139,92,246,.5);background:rgba(139,92,246,.07)}
+.faq summary{cursor:pointer;list-style:none;padding:18px 22px;font:600 16px var(--display);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:22px;line-height:1;color:var(--pink);transition:transform .3s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{padding:0 22px 20px;font-size:14.5px;line-height:1.7;color:var(--dim)}
+
+footer{padding:76px 0 46px;text-align:center;color:var(--mut);font-size:13px;line-height:1.8;max-width:680px;margin:0 auto}
+footer b{color:var(--dim);font-weight:600}
+
+.js .sr{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.js .sr.in{opacity:1;transform:none}
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,80px);z-index:99;max-width:min(92vw,440px);
+  padding:14px 20px;border-radius:15px;font-size:14px;font-weight:500;text-align:center;
+  background:rgba(18,12,30,.96);border:1px solid var(--line);box-shadow:0 18px 44px rgba(0,0,0,.5);opacity:0;transition:opacity .45s,transform .45s cubic-bezier(.16,1,.3,1);pointer-events:none}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.success{border-color:rgba(52,211,153,.5);color:#b4f5d8}
+.toast.error{border-color:rgba(255,45,85,.55);color:#ffb8c6}
+
+@media (max-width:620px){
+  .field{flex-direction:column}
+  .actions{flex-direction:column}
+  .ghost-btn.new{width:100%}
+  .hero{padding:34px 0 4px}
+  .notice{flex-wrap:wrap}
+  .ticker{margin-top:64px}
+  .section{padding-top:70px}
+}
+/* Respect "reduce motion" for the large movements only; glows, gradients and entrances keep playing. */
+@media (prefers-reduced-motion:reduce){
+  .blob,.ticker-track,.pill,.art .fl{animation:none}
+}
 </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-paste" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><polygon points="10 9 16 12 10 15 10 9"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+</svg>
+
+<div class="aurora"></div>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="grain"></div>
+
 <div class="wrap">
-  <h1>Pinsave Route Test</h1>
-  <p class="lead">Paste a Pinterest <b>video</b> link that failed before. This page tries every free route and tells you which one returns a real, playable video.</p>
+  <nav class="nav reveal" style="--d:.05s" aria-label="Main">
+    <div class="logo">
+      <div class="logo-mark" aria-hidden="true"><svg class="i" style="stroke-width:2.6"><use href="#i-download"/></svg></div>
+      Pinsave
+    </div>
+    <div class="nav-pill"><span class="dot"></span>Free · No signup</div>
+  </nav>
 
-  <div class="banner warn" id="file-warn" hidden>You opened this as a local file, so browsers treat every request differently and results may be wrong. Upload this file to GitHub Pages (or any https site) and run it from there.</div>
+  <header class="hero">
+    <div class="eyebrow reveal" style="--d:.1s"><svg class="i"><use href="#i-bolt"/></svg>Pinterest downloader</div>
+    <h1 class="reveal" style="--d:.18s">Save anything from<br><span class="grad">Pinterest</span>, instantly.</h1>
+    <p class="sub reveal" style="--d:.26s">Paste a <b>pinterest.com</b> or <b>pin.it</b> link and download the video, image or GIF in the best quality available.</p>
+    <div class="pills reveal" style="--d:.34s">
+      <span class="pill" style="--c:var(--red)"><svg class="i"><use href="#i-video"/></svg>Videos</span>
+      <span class="pill" style="--c:var(--violet);--fd:-1.2s"><svg class="i"><use href="#i-image"/></svg>Images</span>
+      <span class="pill" style="--c:var(--cyan);--fd:-2.4s"><svg class="i"><use href="#i-sparkle"/></svg>GIFs</span>
+      <span class="pill" style="--c:var(--amber);--fd:-3.6s"><svg class="i"><use href="#i-link"/></svg>pin.it links</span>
+    </div>
 
-  <div class="card">
-    <label for="pin">Pinterest link (pin.it or pinterest.com/pin/…)</label>
-    <input type="text" id="pin" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="https://pin.it/…"/>
-    <label for="worker">Your Cloudflare Worker URL (optional)</label>
-    <input type="url" id="worker" placeholder="https://your-worker.workers.dev"/>
-    <div class="hint">Leave the Worker empty for the first run. Each run takes about 20–40 seconds.</div>
-    <div class="row"><button class="btn" id="run">Run all tests</button></div>
+    <svg class="art reveal" style="--d:.42s" viewBox="0 0 340 190" role="img" aria-label="Illustration: a video, an image and a GIF card with a download badge">
+      <defs>
+        <linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff2d55"/><stop offset="1" stop-color="#ff5fa2"/></linearGradient>
+        <linearGradient id="gb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient>
+        <linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#ff2d55"/></linearGradient>
+        <filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity=".45"/></filter>
+      </defs>
+      <g class="fl"><g transform="rotate(-11 78 100)" filter="url(#sh)">
+        <rect x="30" y="36" width="96" height="128" rx="16" fill="url(#ga)"/>
+        <rect x="40" y="46" width="76" height="70" rx="10" fill="rgba(255,255,255,.18)"/>
+        <polygon points="68,66 68,96 94,81" fill="#fff"/>
+        <rect x="40" y="126" width="52" height="7" rx="3.5" fill="rgba(255,255,255,.55)"/><rect x="40" y="140" width="34" height="7" rx="3.5" fill="rgba(255,255,255,.35)"/></g></g>
+      <g class="fl fl3"><g transform="rotate(11 262 100)" filter="url(#sh)">
+        <rect x="214" y="36" width="96" height="128" rx="16" fill="url(#gc)"/>
+        <rect x="224" y="46" width="76" height="70" rx="10" fill="rgba(255,255,255,.18)"/>
+        <path d="M262 62l5 13 13 5-13 5-5 13-5-13-13-5 13-5z" fill="#fff"/>
+        <rect x="224" y="126" width="52" height="7" rx="3.5" fill="rgba(255,255,255,.55)"/><rect x="224" y="140" width="34" height="7" rx="3.5" fill="rgba(255,255,255,.35)"/></g></g>
+      <g class="fl fl2" filter="url(#sh)">
+        <rect x="118" y="14" width="104" height="142" rx="18" fill="url(#gb)"/>
+        <rect x="128" y="24" width="84" height="80" rx="11" fill="rgba(255,255,255,.18)"/>
+        <circle cx="152" cy="46" r="8" fill="#fff"/><polygon points="132,98 160,66 180,86 192,74 208,98" fill="rgba(255,255,255,.85)"/>
+        <rect x="128" y="114" width="58" height="7" rx="3.5" fill="rgba(255,255,255,.55)"/><rect x="128" y="128" width="38" height="7" rx="3.5" fill="rgba(255,255,255,.35)"/></g>
+      <g class="badge"><circle cx="170" cy="164" r="21" fill="#07030f" stroke="rgba(255,255,255,.25)"/><circle cx="170" cy="164" r="17" fill="url(#ga)"/>
+        <path d="M170 155v13m0 0l-5-5m5 5l5-5M162 173h16" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>
+  </header>
+
+  <main>
+  <div class="card-shell reveal" style="--d:.5s">
+    <div class="card">
+
+      <form id="dl-form" autocomplete="off" novalidate>
+        <label for="pin-url" class="sr-only">Pinterest link</label>
+        <div class="field">
+          <div class="input-wrap" id="input-wrap">
+            <svg class="i" aria-hidden="true"><use href="#i-link"/></svg>
+            <input type="text" id="pin-url" inputmode="url" enterkeyhint="go" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Paste a pin.it or pinterest.com link…" required/>
+          </div>
+          <button type="submit" class="btn btn-primary" id="go-btn">
+            <span class="btn-spin" id="go-spin" hidden></span>
+            <svg class="i" id="go-ico" aria-hidden="true"><use href="#i-download"/></svg>
+            <span id="go-label">Get it</span>
+          </button>
+        </div>
+        <div class="meta-row">
+          <span>In Pinterest: tap <b style="color:var(--dim)">Share → Copy link</b></span>
+          <button type="button" class="linkish" id="paste-btn"><svg class="i"><use href="#i-paste"/></svg>Paste from clipboard</button>
+        </div>
+      </form>
+
+      <div class="setup-panel" id="setup-panel" hidden>
+        <h4>Owner setup: helper</h4>
+        Only visible with <b>#setup</b> in the address. The helper is a free Cloudflare Worker. It looks up the pin number behind <code>pin.it</code> short links and lets the Save button download videos directly.
+        <ol>
+          <li>Sign up free at <b>dash.cloudflare.com</b>, then <b>Workers &amp; Pages → Create → Hello World → Deploy</b>.</li>
+          <li><b>Edit code</b>, replace everything with the code below, then <b>Deploy</b>.</li>
+          <li>In the code, set <code>ALLOWED_ORIGIN</code> to your site address (for example <code>https://xyz-gaman.github.io</code>) and deploy again.</li>
+          <li>Paste your <b>…workers.dev</b> address below and tap Connect (this browser only). For every visitor, put it into <code>CONFIG.WORKER_URL</code> in this page's script.</li>
+        </ol>
+        <textarea id="worker-src" readonly spellcheck="false" aria-label="Worker code"></textarea>
+        <div class="row"><button type="button" id="copy-worker"><svg class="i"><use href="#i-copy"/></svg>Copy Worker code</button></div>
+        <input type="url" id="worker-url" placeholder="https://your-worker.workers.dev" aria-label="Worker address"/>
+        <div class="row"><button type="button" id="connect-worker">Connect</button><button type="button" id="clear-worker">Remove</button></div>
+      </div>
+
+      <div class="steps" id="steps-bar" hidden>
+        <div class="step" data-step="1"><div class="step-dot">1</div><div class="step-label">Finding</div></div>
+        <div class="step-line"><i></i></div>
+        <div class="step" data-step="2"><div class="step-dot">2</div><div class="step-label">Preview</div></div>
+        <div class="step-line"><i></i></div>
+        <div class="step" data-step="3"><div class="step-dot">3</div><div class="step-label">Ready</div></div>
+      </div>
+
+      <div class="live-line" id="live-line" role="status" aria-live="polite">
+        <span class="live-text" id="live-text">Starting…</span>
+        <span class="live-time" id="live-time">0.0s</span>
+      </div>
+
+      <div class="notice err" id="notice" hidden role="alert">
+        <svg class="i" aria-hidden="true"><use href="#i-alert"/></svg>
+        <span id="notice-text"></span>
+        <button type="button" class="retry-btn" id="retry-btn"><svg class="i"><use href="#i-refresh"/></svg>Retry</button>
+      </div>
+
+      <div class="result" id="result-card" hidden>
+        <div class="preview" id="preview-box"></div>
+        <div class="pin-title" id="pin-title"></div>
+        <div class="pin-sub" id="pin-sub"></div>
+        <div class="q-row" id="q-row" hidden></div>
+        <div class="actions">
+          <button type="button" class="btn btn-primary save-btn" id="save-btn" disabled>
+            <span class="save-fill" id="save-fill"></span>
+            <svg class="i" aria-hidden="true"><use href="#i-download"/></svg>
+            <span id="save-label">Save to device</span>
+          </button>
+          <button type="button" class="btn ghost-btn new" id="new-btn"><svg class="i"><use href="#i-refresh"/></svg>New link</button>
+        </div>
+        <div class="manual" id="manual-box" hidden>
+          <b>Finish saving on your phone</b>
+          <div id="manual-text" style="margin-top:6px"></div>
+          <div class="row">
+            <a class="btn ghost-btn" id="open-file" href="#" target="_blank" rel="noopener noreferrer"><svg class="i"><use href="#i-external"/></svg>Open file</a>
+            <button type="button" class="btn ghost-btn" id="copy-link"><svg class="i"><use href="#i-copy"/></svg>Copy link</button>
+            <button type="button" class="btn ghost-btn" id="share-link" hidden><svg class="i"><use href="#i-share"/></svg>Share</button>
+          </div>
+          <input type="text" id="link-field" readonly aria-label="Direct file link"/>
+        </div>
+      </div>
+
+    </div>
   </div>
-
-  <div id="tests"></div>
-  <div id="verdict" hidden></div>
-
-  <div class="card" id="report-card" hidden>
-    <b>Report</b>
-    <div class="hint">Copy this and paste it back to me. If the button fails, long-press inside the box, choose Select all, then Copy.</div>
-    <textarea id="report" readonly spellcheck="false" aria-label="Report"></textarea>
-    <div class="row"><button class="btn ghost" id="copy-report">Copy report</button></div>
-  </div>
-
-  <div class="card">
-    <details class="code">
-      <summary>Cloudflare Worker code (for the optional Worker test)</summary>
-      <div class="hint">Cloudflare dashboard → Workers &amp; Pages → Create → Hello World → Edit code → paste → Deploy. Then paste the …workers.dev address above.</div>
-      <textarea id="worker-src" readonly spellcheck="false" aria-label="Worker code"></textarea>
-      <div class="row"><button class="btn ghost" id="copy-worker">Copy Worker code</button></div>
-    </details>
-  </div>
+  </main>
+  <noscript><p style="margin-top:20px;text-align:center;color:#ffb8c6">Pinsave needs JavaScript to work.</p></noscript>
 </div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="ticker sr" aria-hidden="true"><div class="ticker-track" id="ticker-track"></div></div>
+
+<div class="wrap">
+  <section class="section" aria-labelledby="h-what">
+    <div class="sec-head sr">
+      <h2 id="h-what">Everything you can save</h2>
+      <p>One link, whatever the pin is. Pinsave detects the type and fetches the original file.</p>
+    </div>
+    <div class="grid">
+      <div class="tile sr" style="--c:var(--red)"><div class="ico"><svg class="i"><use href="#i-video"/></svg></div>
+        <h3>Videos</h3><p>The real MP4 with sound, in the highest quality Pinterest offers for that pin.</p></div>
+      <div class="tile sr" style="--c:var(--violet);transition-delay:.08s"><div class="ico"><svg class="i"><use href="#i-image"/></svg></div>
+        <h3>Images</h3><p>The original upload when it exists, not the blurry thumbnail.</p></div>
+      <div class="tile sr" style="--c:var(--cyan);transition-delay:.16s"><div class="ico"><svg class="i"><use href="#i-sparkle"/></svg></div>
+        <h3>GIFs</h3><p>Animated pins stay animated and save as a real .gif.</p></div>
+      <div class="tile sr" style="--c:var(--amber);transition-delay:.24s"><div class="ico"><svg class="i"><use href="#i-link"/></svg></div>
+        <h3>Short links</h3><p>pin.it share links work, and pasted share text is cleaned up for you.</p></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-how">
+    <div class="sec-head sr">
+      <h2 id="h-how">Three taps. Done.</h2>
+      <p>No account, no app, no watermark added by us.</p>
+    </div>
+    <div class="grid">
+      <div class="tile sr" style="--c:var(--pink)"><span class="num">01</span><div class="ico"><svg class="i"><use href="#i-share"/></svg></div>
+        <h3>Copy the link</h3><p>In Pinterest open the pin, tap Share, then Copy link.</p></div>
+      <div class="tile sr" style="--c:var(--violet);transition-delay:.1s"><span class="num">02</span><div class="ico"><svg class="i"><use href="#i-paste"/></svg></div>
+        <h3>Paste it here</h3><p>Paste into the box above. Pinsave finds the media and shows a preview.</p></div>
+      <div class="tile sr" style="--c:var(--green);transition-delay:.2s"><span class="num">03</span><div class="ico"><svg class="i"><use href="#i-download"/></svg></div>
+        <h3>Save it</h3><p>Tap Save to device. If your browser needs one more tap, Pinsave shows exactly which.</p></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-faq">
+    <div class="sec-head sr"><h2 id="h-faq">Questions</h2></div>
+    <div class="faq sr">
+      <details><summary>Why does Save sometimes open the file in a new tab?</summary>
+        <p>Pinterest doesn't let other websites read its video files directly, so some browsers can't save them from inside the page. When that happens Pinsave opens the file and tells you the one extra tap: on the player, tap the three dots and choose Download, or long-press and choose Download.</p></details>
+      <details><summary>I only got a poster image for a video pin</summary>
+        <p>Pinterest occasionally returns only the first frame for a pin. Tap Retry, or try again in a minute. If it keeps happening, the pin may be private or removed.</p></details>
+      <details><summary>Is it free? Do I need an account?</summary>
+        <p>Free, and no signup. Nothing is installed.</p></details>
+      <details><summary>Where do my links go?</summary>
+        <p>Your browser asks Pinterest directly for the pin's details. For short links (pin.it) Pinsave may use a small helper server, or public helper services, to find the pin number. Don't paste links you consider private.</p></details>
+      <details><summary>Can I use what I download?</summary>
+        <p>Pins belong to their creators. Download for personal use, and ask permission or give credit before reposting or using anything commercially.</p></details>
+    </div>
+  </section>
+
+  <footer class="sr">
+    <b>Pinsave</b> · An independent tool, not affiliated with or endorsed by Pinterest.<br>
+    Please respect creators' rights and Pinterest's Terms of Service.
+  </footer>
+</div>
+
+<div class="toast" id="toast-box" role="status" aria-live="polite"></div>
 
 <script type="text/plain" id="worker-template">
-// Pinsave worker for Cloudflare Workers (free plan)
+// Pinsave helper for Cloudflare Workers (free plan, no card needed).
+// It does the two jobs a web page cannot do by itself:
+//   /resolve?url=<pin.it or pinterest link>  -> finds the pin number behind a short link
+//   /dl?u=<pinimg file>&name=<file name>     -> serves the file as a download
+// plus a fallback: ?url=<pin link> -> reads the pin page.
+//
+// After deploying, set ALLOWED_ORIGIN to your site, e.g. 'https://xyz-gaman.github.io'
+
 const ALLOWED_ORIGIN = '*';
+
 const PIN_HOST = /^(?:[a-z0-9-]+\.)*(?:pinterest\.(?:com|co\.uk|com\.au|com\.mx|co\.kr|ca|de|fr|es|it|jp|pt|nl|se|ch|at|ie|ph|ru|dk|nz|cl|kr|in)|pin\.it)$/i;
 const MEDIA_HOST = /^(?:[a-z0-9-]+\.)*pinimg\.com$/i;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
@@ -123,14 +499,22 @@ const HEADERS = { 'User-Agent': UA, 'Accept': 'text/html,application/xhtml+xml,a
 
 export default {
   async fetch(req) {
-    const cors = { 'Access-Control-Allow-Origin': ALLOWED_ORIGIN, 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': '*', 'Access-Control-Expose-Headers': 'Content-Length, Content-Type' };
+    const cors = {
+      'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Expose-Headers': 'Content-Length, Content-Type'
+    };
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     const json = (b, s) => new Response(JSON.stringify(b), { status: s || 200, headers: Object.assign({ 'Content-Type': 'application/json' }, cors) });
     const u = new URL(req.url);
     try {
       if (u.pathname === '/dl') return await download(u, cors);
-      return await resolve(u, json);
-    } catch (e) { return json({ error: 'upstream failure' }, 502); }
+      if (u.pathname === '/resolve') return await resolveId(u, json);
+      return await pageInfo(u, json);
+    } catch (e) {
+      return json({ error: 'upstream failure' }, 502);
+    }
   }
 };
 
@@ -143,19 +527,39 @@ function scan(text) {
   const hls = [...t.matchAll(/https?:\/\/v\d*\.pinimg\.com\/[A-Za-z0-9._\/%-]+?\.m3u8/g)].map(m => fromHls(m[0]));
   return uniq(mp4.concat(hls));
 }
+function parseTarget(raw) {
+  let p;
+  try { p = new URL(raw || ''); } catch (e) { return null; }
+  if (!/^https?:$/.test(p.protocol) || !PIN_HOST.test(p.hostname)) return null;
+  p.protocol = 'https:';
+  return p;
+}
 
-async function getPage(start) {
-  let u = start;
+// Follow redirects by hand, only ever visiting Pinterest hosts.
+async function walk(start, stopOnPin) {
+  let cur = start;
   for (let i = 0; i < 6; i++) {
-    const p = new URL(u);
+    const p = new URL(cur);
     if (p.protocol !== 'https:' || !PIN_HOST.test(p.hostname)) throw new Error('blocked host');
-    const r = await fetch(u, { redirect: 'manual', headers: HEADERS });
+    if (stopOnPin) { const m = cur.match(/\/pin\/(\d{5,})/); if (m) return { url: cur, id: m[1], html: null }; }
+    const r = await fetch(cur, { redirect: 'manual', headers: HEADERS });
     const loc = r.headers.get('location');
-    if (r.status >= 300 && r.status < 400 && loc) { u = new URL(loc, u).href; continue; }
-    return { html: await r.text(), url: u };
+    if (r.status >= 300 && r.status < 400 && loc) { cur = new URL(loc, cur).href; continue; }
+    return { url: cur, html: await r.text() };
   }
   throw new Error('too many redirects');
 }
+
+async function resolveId(u, json) {
+  const t = parseTarget(u.searchParams.get('url'));
+  if (!t) return json({ error: 'only Pinterest links are allowed' }, 400);
+  const r = await walk(t.href, true);
+  if (r.id) return json({ id: r.id, url: r.url });
+  const m = (r.html || '').match(/\/pin\/(\d{5,})/);
+  if (m) return json({ id: m[1], url: r.url });
+  return json({ error: 'no pin id found' }, 404);
+}
+
 async function viaApi(id) {
   const data = JSON.stringify({ options: { id: String(id), field_set_key: 'detailed' }, context: {} });
   const api = 'https://www.pinterest.com/resource/PinResource/get/?source_url=' + encodeURIComponent('/pin/' + id + '/') + '&data=' + encodeURIComponent(data);
@@ -166,385 +570,716 @@ async function viaWidgets(id) {
   const r = await fetch('https://widgets.pinterest.com/v3/pidgets/pins/info/?pin_ids=' + encodeURIComponent(id), { headers: HEADERS });
   return scan(await r.text());
 }
-async function resolve(u, json) {
-  const target = u.searchParams.get('url');
-  if (!target) return json({ error: 'missing ?url=' }, 400);
-  let parsed;
-  try { parsed = new URL(target); } catch (e) { return json({ error: 'bad url' }, 400); }
-  if (!/^https?:$/.test(parsed.protocol) || !PIN_HOST.test(parsed.hostname)) return json({ error: 'only Pinterest links are allowed' }, 400);
-  parsed.protocol = 'https:';
-  const page = await getPage(parsed.href);
-  const html = norm(page.html);
+
+async function pageInfo(u, json) {
+  const t = parseTarget(u.searchParams.get('url'));
+  if (!t) return json({ error: 'only Pinterest links are allowed' }, 400);
+  const page = await walk(t.href, false);
+  const html = norm(page.html || '');
   const idm = page.url.match(/\/pin\/(\d{5,})/) || html.match(/\/pin\/(\d{5,})/);
   const pinId = idm ? idm[1] : null;
   const tm = html.match(/<meta[^>]+property="og:title"[^>]*content="([^"]+)"/i);
-  const title = tm ? tm[1] : '';
+  const title = tm ? tm[1].replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'") : '';
   let videos = scan(html);
   const isVideo = videos.length > 0 || /"is_video"\s*:\s*true/.test(html) || /property="og:video/i.test(html);
-  let via = 'page';
   if (!videos.length && pinId) {
-    videos = await viaApi(pinId).catch(() => []); via = 'api';
-    if (!videos.length) { videos = await viaWidgets(pinId).catch(() => []); via = 'widgets'; }
+    videos = await viaApi(pinId).catch(() => []);
+    if (!videos.length) videos = await viaWidgets(pinId).catch(() => []);
   }
-  if (videos.length) return json({ type: 'video', url: videos[0], videos: videos.slice(0, 5), title, pinId, via });
+  if (videos.length) return json({ type: 'video', url: videos[0], videos: videos.slice(0, 5), title, pinId });
   const imgs = uniq([...html.matchAll(/https?:\/\/i\.pinimg\.com\/[A-Za-z0-9._\/%x-]+?\.(?:jpg|jpeg|png|webp|gif)/g)].map(m => m[0])).filter(x => !/avatar|profile/i.test(x));
+  const rank = x => (/\/originals\/.*\.gif$/i.test(x) ? 200 : /\/originals\//.test(x) ? 100 : /1200x/.test(x) ? 90 : /736x/.test(x) ? 70 : 40);
+  imgs.sort((a, b) => rank(b) - rank(a));
   if (isVideo) return json({ type: 'video-no-url', title, pinId, poster: imgs[0] || null });
   if (imgs.length) return json({ type: 'image', url: imgs[0], title, pinId });
   return json({ error: 'no media found' }, 404);
 }
+
 async function download(u, cors) {
   let t;
   try { t = new URL(u.searchParams.get('u') || ''); } catch (e) { return new Response('bad url', { status: 400, headers: cors }); }
   if (t.protocol !== 'https:' || !MEDIA_HOST.test(t.hostname)) return new Response('blocked', { status: 403, headers: cors });
   const r = await fetch(t.href, { headers: { 'User-Agent': UA } });
+  if (!r.ok) return new Response('upstream ' + r.status, { status: 502, headers: cors });
   const name = (u.searchParams.get('name') || 'pinterest').replace(/[^\w.-]+/g, '_').slice(0, 80);
   const h = new Headers(cors);
   h.set('Content-Type', r.headers.get('content-type') || 'application/octet-stream');
   h.set('Content-Disposition', 'attachment; filename="' + name + '"');
-  const len = r.headers.get('content-length'); if (len) h.set('Content-Length', len);
-  return new Response(r.body, { status: r.status, headers: h });
+  const len = r.headers.get('content-length');
+  if (len) h.set('Content-Length', len);
+  return new Response(r.body, { status: 200, headers: h });
 }
 </script>
 
 <script>
 (function(){
 'use strict';
-var $=function(id){return document.getElementById(id);};
+
+/* ═════ CONFIG ═════
+   Put your deployed Cloudflare Worker address here so every visitor gets short-link lookup and one-tap saving.
+   Example: WORKER_URL: 'https://pinsave.yourname.workers.dev'                                            */
+var CONFIG={ WORKER_URL:'' };
+
+var $=function(id){ return document.getElementById(id); };
 var enc=encodeURIComponent;
+var store={
+  get:function(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } },
+  set:function(k,v){ try{ if(v) localStorage.setItem(k,v); else localStorage.removeItem(k); }catch(e){} }
+};
+
+var elForm=$('dl-form'), elInput=$('pin-url'), elInputWrap=$('input-wrap'),
+    elGoBtn=$('go-btn'), elGoLabel=$('go-label'), elGoSpin=$('go-spin'), elGoIco=$('go-ico'),
+    elSteps=$('steps-bar'), elLive=$('live-line'), elLiveText=$('live-text'), elLiveTime=$('live-time'),
+    elNotice=$('notice'), elNoticeText=$('notice-text'), elRetry=$('retry-btn'),
+    elResult=$('result-card'), elPreview=$('preview-box'), elTitle=$('pin-title'), elSub=$('pin-sub'), elQRow=$('q-row'),
+    elSaveBtn=$('save-btn'), elSaveLabel=$('save-label'), elSaveFill=$('save-fill'),
+    elNewBtn=$('new-btn'), elPaste=$('paste-btn'), elToast=$('toast-box'),
+    elManual=$('manual-box'), elManualText=$('manual-text'), elOpenFile=$('open-file'),
+    elCopyLink=$('copy-link'), elShareLink=$('share-link'), elLinkField=$('link-field'),
+    elSetup=$('setup-panel'), elWorkerSrc=$('worker-src'), elWorkerUrl=$('worker-url');
+
+var state={ media:null, lastUrl:'', busy:false, saving:false, verifying:false };
+var current=null, clockTimer=null, t0=0, stepsTimer=null;
+
+/* ═════ link helpers ═════ */
 var PIN_HOST=/^(?:[a-z0-9-]+\.)*(?:pinterest\.(?:com|co\.uk|com\.au|com\.mx|co\.kr|ca|de|fr|es|it|jp|pt|nl|se|ch|at|ie|ph|ru|dk|nz|cl|kr|in)|pin\.it)$/i;
 
-if(location.protocol==='file:') $('file-warn').hidden=false;
-$('worker-src').value=($('worker-template').textContent||'').trim();
-try{ $('worker').value=localStorage.getItem('diag_worker')||''; }catch(e){}
+function validateUrl(raw){
+  var v=String(raw||'').trim();
+  if(!v) return null;
+  /* Pinterest share text can look like "Check this out https://pin.it/abc" — take the link only */
+  var tok=(v.match(/https?:\/\/\S+/i)||[v.split(/\s+/)[0]])[0];
+  if(!/^https?:\/\//i.test(tok)) tok='https://'+tok;
+  try{
+    var u=new URL(tok);
+    if(!PIN_HOST.test(u.hostname)) return null;
+    if(u.pathname.length<2) return null;
+    u.protocol='https:';
+    return u.href;
+  }catch(e){ return null; }
+}
+function safeHttps(u){
+  try{ var p=new URL(String(u),location.href); return p.protocol==='https:'?p.href:''; }catch(e){ return ''; }
+}
+function cleanUrl(u){
+  var s=String(u).replace(/\\u0026/gi,'&').replace(/\\u002F/gi,'/').replace(/\\\//g,'/').replace(/&amp;/g,'&').trim();
+  if(s.indexOf('//')===0) s='https:'+s;
+  return s;
+}
+function extractPinId(str){ var m=String(str||'').match(/\/pin\/(\d{5,})/); return m?m[1]:null; }
+function workerBase(){
+  var b=(CONFIG.WORKER_URL||store.get('pinsave_backend')||'').trim().replace(/\/+$/,'');
+  return safeHttps(b)?b:'';
+}
 
-/* ───── helpers ───── */
-function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(function(){t.classList.remove('show');},3800); }
-function robustCopy(text,ta){
-  function manual(){ if(ta){ ta.focus(); ta.select(); try{ ta.setSelectionRange(0,ta.value.length); }catch(e){} } toast('Copy was blocked here. The text is selected: long-press it and choose Copy.'); }
-  function legacy(){
-    var area=ta&&ta.value===text?ta:document.createElement('textarea');
-    var temp=area!==ta;
-    if(temp){ area.value=text; area.setAttribute('readonly',''); area.style.cssText='position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(area); }
-    area.focus(); area.select(); try{ area.setSelectionRange(0,text.length); }catch(e){}
-    var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
-    if(temp) document.body.removeChild(area);
-    if(ok) toast('Copied.'); else manual();
-  }
-  if(navigator.clipboard&&window.isSecureContext){
-    navigator.clipboard.writeText(text).then(function(){ toast('Copied.'); },legacy);
-  }else legacy();
-}
-function fetchT(url,opts,ms){
-  var c=new AbortController(), t=setTimeout(function(){c.abort();},ms||12000);
+/* ═════ network helpers ═════ */
+function fetchT(url,opts,ms,outer){
+  var c=new AbortController();
+  var kill=function(){ try{ c.abort(); }catch(e){} };
+  if(outer){ if(outer.aborted) kill(); else outer.addEventListener('abort',kill); }
+  var t=setTimeout(kill,ms||12000);
   var o=Object.assign({signal:c.signal},opts||{});
-  return fetch(url,o).then(function(r){clearTimeout(t);return r;},function(e){clearTimeout(t);throw e;});
+  var done=function(){ clearTimeout(t); if(outer) outer.removeEventListener('abort',kill); };
+  return fetch(url,o).then(function(r){ done(); return r; },function(e){ done(); throw e; });
 }
-function errText(e){
-  if(e&&e.name==='AbortError') return 'timed out';
-  if(e instanceof TypeError) return 'blocked by the browser (CORS) or network error';
-  return String((e&&e.message)||e);
+async function fetchJson(url,sig,ms,opts){
+  var r=await fetchT(url,opts,ms,sig);
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  var t=await r.text();
+  try{ return JSON.parse(t); }catch(e){ throw new Error('bad-json'); }
 }
-function norm(s){ return String(s).replace(/\\u002F/gi,'/').replace(/\\u0026/gi,'&').replace(/\\\//g,'/').replace(/&amp;/g,'&'); }
-function uniq(a){ return a.filter(function(x,i){return a.indexOf(x)===i;}); }
-function findMedia(raw){
-  var t=norm(raw);
+
+/* ═════ Pinterest widget data — asked straight from the visitor's own browser ═════ */
+function widgetUrls(id){
+  return [ 'https://widgets.pinterest.com/v3/pidgets/pins/info/?pin_ids='+id,
+           'https://api.pinterest.com/v3/pidgets/pins/info/?pin_ids='+id ];
+}
+async function widgetFetch(id,sig){
+  var urls=widgetUrls(id), last=null;
+  for(var i=0;i<urls.length;i++){
+    try{ return await fetchJson(urls[i],sig,10000,{credentials:'omit'}); }
+    catch(e){ if(sig.aborted) throw e; last=e; }
+  }
+  throw last||new Error('widget-failed');
+}
+/* Fallback for browsers that block the request above: the same data loaded as a script (JSONP). */
+function jsonpOne(url,sig){
+  return new Promise(function(resolve,reject){
+    var name='__pinsave_cb'+Date.now()+Math.floor(Math.random()*1000), s=document.createElement('script'), done=false;
+    function fin(v,err){
+      if(done) return; done=true; clearTimeout(t);
+      sig.removeEventListener('abort',onAbort);
+      try{ delete window[name]; }catch(e){ window[name]=undefined; }
+      if(s.parentNode) s.parentNode.removeChild(s);
+      if(err) reject(err); else resolve(v);
+    }
+    function onAbort(){ fin(null,new Error('aborted')); }
+    var t=setTimeout(function(){ fin(null,new Error('timeout')); },10000);
+    sig.addEventListener('abort',onAbort);
+    window[name]=function(d){ fin(d); };
+    s.onerror=function(){ fin(null,new Error('script-failed')); };
+    s.src=url+'&callback='+name;
+    document.head.appendChild(s);
+  });
+}
+async function widgetJsonp(id,sig){
+  var urls=widgetUrls(id), last=null;
+  for(var i=0;i<urls.length;i++){
+    try{ var d=await jsonpOne(urls[i],sig); if(d) return d; }
+    catch(e){ if(sig.aborted) throw e; last=e; }
+  }
+  throw last||new Error('jsonp-failed');
+}
+
+/* ═════ parsing ═════ */
+function normText(s){ return String(s).replace(/\\u002F/gi,'/').replace(/\\u0026/gi,'&').replace(/\\\//g,'/').replace(/&amp;/g,'&'); }
+function uniq(a){ return a.filter(function(x,i){ return a.indexOf(x)===i; }); }
+function findVideosInText(text){
+  var t=normText(text||'');
   var mp4=uniq(t.match(/https?:\/\/v\d*\.pinimg\.com\/[A-Za-z0-9._\/%-]+?\.mp4/gi)||[]);
   var hls=uniq(t.match(/https?:\/\/v\d*\.pinimg\.com\/[A-Za-z0-9._\/%-]+?\.m3u8/gi)||[]);
-  var derived=hls.map(function(u){return u.replace('/hls/','/720p/').replace(/\.m3u8$/,'.mp4');}).filter(function(u){return mp4.indexOf(u)<0;});
-  var images=uniq(t.match(/https?:\/\/i\.pinimg\.com\/[A-Za-z0-9._\/%x-]+?\.(?:jpg|jpeg|png|webp|gif)/gi)||[]).filter(function(u){return !/avatar|profile/i.test(u);});
-  var hint=/"is_video"\s*:\s*true/.test(t)||/og:video/i.test(t)||(/video_list/.test(t)&&/"videos"/.test(t))||/V_720P|V_HLS|V_EXP/.test(t);
-  return {mp4:mp4,hls:hls,derived:derived,images:images,hint:hint};
+  var derived=hls.map(function(u){ return u.replace('/hls/','/720p/').replace(/\.m3u8$/,'.mp4'); }).filter(function(u){ return mp4.indexOf(u)<0; });
+  return { mp4:mp4, derived:derived };
 }
-function canPlay(url){
-  return new Promise(function(res){
-    var v=document.createElement('video'); v.muted=true; v.preload='metadata'; v.setAttribute('playsinline','');
-    var done=false;
-    function fin(ok){ if(done) return; done=true; clearTimeout(t); try{v.removeAttribute('src'); v.load();}catch(e){} res(ok); }
-    var t=setTimeout(function(){fin(false);},9000);
-    v.onloadedmetadata=function(){ fin(v.videoWidth>0||v.duration>0); };
-    v.onerror=function(){ fin(false); };
-    v.src=url;
-  });
+function hasVideoHint(text){
+  var t=normText(text||'');
+  return /"is_video"\s*:\s*true/.test(t)||/og:video/i.test(t)||(/video_list/.test(t)&&/"videos"/.test(t))||/V_720P|V_HLS|V_EXP/.test(t);
 }
-function canFetch(url){
-  var c=new AbortController(), t=setTimeout(function(){c.abort();},9000);
-  return fetch(url,{signal:c.signal}).then(function(r){
-    if(!r.ok||!r.body) { clearTimeout(t); return false; }
-    var rd=r.body.getReader();
-    return rd.read().then(function(x){ clearTimeout(t); try{rd.cancel();}catch(e){} c.abort(); return !!(x&&x.value&&x.value.length>0); });
-  }).catch(function(){ clearTimeout(t); return false; });
+function imgRank(u){
+  if(/\/originals\/.*\.gif$/i.test(u)) return 200;
+  if(/\/originals\//.test(u)) return 100;
+  if(/1200x/.test(u)) return 90;
+  if(/736x/.test(u)) return 70;
+  if(/564x/.test(u)) return 55;
+  if(/474x|236x|170x/.test(u)) return 20;
+  return 60;
 }
-/* Turn a media scan into a verdict, then verify the first video link really plays. */
-async function judge(m,L){
-  var cand=m.mp4.concat(m.derived);
-  if(!cand.length){
-    if(m.hint){ L('This pin is a video, but no video link came back (poster only).'); return {status:'fail',summary:'Video pin, but only the poster was returned'}; }
-    if(m.images.length){ L('Only image links came back; cannot tell if the pin has a video.'); return {status:'partial',summary:'Image only (cannot confirm video)'}; }
-    L('No Pinterest media found in the reply.'); return {status:'fail',summary:'No media found'};
+function imageFromText(t,source){
+  var doc=normText(t||''), list=uniq(doc.match(/https?:\/\/i\.pinimg\.com\/[A-Za-z0-9._\/%x-]+?\.(?:jpg|jpeg|png|webp|gif)/gi)||[]).filter(function(u){ return !/avatar|profile/i.test(u); });
+  var og=doc.match(/<meta[^>]+property=["']og:image["'][^>]*content=["']([^"']+)/i)||doc.match(/<meta[^>]+content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+  if(og) list.unshift(cleanUrl(og[1]));
+  list=list.map(safeHttps).filter(Boolean);
+  if(!list.length) return null;
+  list.sort(function(a,b){ return imgRank(b)-imgRank(a); });
+  return { type:'image', url:list[0], source:source };
+}
+function titleFromText(doc){
+  var m=doc.match(/<meta[^>]+property=["']og:title["'][^>]*content=["']([^"']{3,})/i)||doc.match(/<title[^>]*>([^<]{3,})<\/title>/i);
+  if(!m) return '';
+  var t=m[1].replace(/&amp;/g,'&').replace(/&#x27;|&#39;/g,"'").replace(/&quot;/g,'"').trim();
+  if(t.indexOf('|')!==-1) t=t.split('|')[0].trim();
+  return t.length>90?t.slice(0,87)+'…':t;
+}
+function qualityOf(v){
+  var n=0;
+  if(v.w&&v.h) n=Math.min(v.w,v.h); else if(v.w) n=v.w; else if(v.h) n=v.h;
+  if(!n){ var m=String(v.url).match(/_(\d{3,4})w\.mp4/); if(m) n=parseInt(m[1],10); }
+  return n;
+}
+function buildVideo(variantsIn,derived,extra){
+  var seen={}, list=[];
+  variantsIn.forEach(function(v){ if(!seen[v.url]){ seen[v.url]=1; v.n=qualityOf(v); list.push(v); } });
+  list.sort(function(a,b){ return (b.n||0)-(a.n||0); });
+  var backups=derived.filter(function(u){ return !seen[u]; });
+  var urls=list.map(function(v){ return v.url; }).concat(backups);
+  if(!urls.length) return null;
+  var media={ type:'video', url:urls[0], alts:urls,
+    variants:list.map(function(v){ return { url:v.url, label:v.n?v.n+'p':'HD' }; }) };
+  if(!media.variants.length) media.variants=[{ url:urls[0], label:'HD' }];
+  for(var k in extra) media[k]=extra[k];
+  return media;
+}
+function parseWidget(j,id){
+  var d=j&&j.data; if(Array.isArray(d)) d=d[0];
+  if(!d||typeof d!=='object') throw new Error('no-data');
+  var title=String(d.title||d.grid_title||d.seo_title||'').trim()||String(d.description||'').trim();
+  if(title.length>90) title=title.slice(0,87)+'…';
+  var author=(d.pinner&&(d.pinner.full_name||d.pinner.username))||'';
+  var raw=''; try{ raw=JSON.stringify(d); }catch(e){}
+  var extra={ title:title, author:author, pinId:id, source:'Pinterest' };
+
+  /* image (also the poster of a video) */
+  var img=null;
+  if(d.images&&typeof d.images==='object'){
+    var prefer=['orig','1200x','736x','564x'], i, k;
+    for(i=0;i<prefer.length&&!img;i++){ if(d.images[prefer[i]]&&d.images[prefer[i]].url) img=d.images[prefer[i]].url; }
+    if(!img){ for(k in d.images){ if(d.images[k]&&d.images[k].url){ img=d.images[k].url; break; } } }
   }
-  L('Found '+m.mp4.length+' MP4 link(s)'+(m.derived.length?' and '+m.derived.length+' guessed from a playlist':'')+'.');
-  L('First: '+cand[0]);
-  L('Checking that it plays in this browser…');
-  var plays=false, i, used=cand[0];
-  for(i=0;i<Math.min(cand.length,3);i++){ if(await canPlay(cand[i])){ plays=true; used=cand[i]; break; } }
-  L(plays?'Plays: yes ('+used+')':'Plays: no, none of the first '+Math.min(cand.length,3)+' links loaded');
-  var fetchable=false;
-  if(plays){ fetchable=await canFetch(used); L('In-page download (Save button) possible: '+(fetchable?'yes':'no, the browser blocks reading it; a Worker or the Share/long-press fallback would be needed')); }
-  if(plays) return {status:'pass',summary:'Real video found and it plays'+(fetchable?' (and can be saved in-page)':' (saving needs a helper)'),video:used,fetchable:fetchable};
-  return {status:'partial',summary:'Video link found but it did not play'};
+  img=img&&safeHttps(cleanUrl(img));
+
+  /* video */
+  var variants=[];
+  var vl=d.videos&&d.videos.video_list;
+  if(vl&&typeof vl==='object'){
+    for(var key in vl){
+      var v=vl[key]; if(!v||!v.url) continue;
+      var u=safeHttps(cleanUrl(v.url)); if(!u) continue;
+      if(/\.mp4(\?|$)/i.test(u)) variants.push({ url:u, w:v.width||0, h:v.height||0 });
+    }
+  }
+  var rx=findVideosInText(raw);
+  rx.mp4.forEach(function(u){ u=safeHttps(u); if(u&&!variants.some(function(x){ return x.url===u; })) variants.push({ url:u, w:0, h:0 }); });
+  var video=buildVideo(variants,rx.derived.map(safeHttps).filter(Boolean),extra);
+  if(video){ video.poster=img||null; return video; }
+
+  if(d.videos||hasVideoHint(raw)){
+    return { type:'video-blocked', poster:img?{ type:'image', url:img, title:title, author:author, pinId:id, source:'Pinterest' }:null };
+  }
+  if(img) return { type:'image', url:img, title:title, author:author, pinId:id, source:'Pinterest' };
+  throw new Error('no-media');
 }
 
-/* ───── pin resolving ───── */
-async function resolvePin(input,L){
-  var m=input.match(/\/pin\/(\d{5,})/);
-  var urlTok=(input.match(/https?:\/\/\S+/i)||[input.trim().split(/\s+/)[0]])[0];
-  if(!/^https?:\/\//i.test(urlTok)) urlTok='https://'+urlTok;
-  var u; try{ u=new URL(urlTok); }catch(e){ throw new Error('That is not a valid link.'); }
-  if(!PIN_HOST.test(u.hostname)) throw new Error('Only pinterest.com or pin.it links are accepted.');
-  u.protocol='https:';
-  var ctx={ input:u.href, id:m?m[1]:null, page:null };
-  if(ctx.id){ L('Pin id from link: '+ctx.id); return ctx; }
-  L('Short link, looking up the real pin number through public helpers…');
-  var resolvers=[
-    { name:'AllOrigins', url:'https://api.allorigins.win/get?url='+enc(u.href), json:true },
-    { name:'CodeTabs',   url:'https://api.codetabs.com/v1/proxy?quest='+enc(u.href) },
-    { name:'CorsProxy',  url:'https://corsproxy.io/?url='+enc(u.href) }
+/* ═════ short links (pin.it) ═════ */
+async function resolveShort(url,sig){
+  var base=workerBase(), id=null;
+  if(base){
+    try{ var j=await fetchJson(base+'/resolve?url='+enc(url),sig,12000); if(j&&j.id) return String(j.id); }
+    catch(e){ if(sig.aborted) throw e; }
+  }
+  var mirrors=[
+    { u:'https://api.allorigins.win/get?url='+enc(url), json:true },
+    { u:'https://api.codetabs.com/v1/proxy?quest='+enc(url) },
+    { u:'https://corsproxy.io/?url='+enc(url) }
   ];
-  for(var ri=0;ri<resolvers.length&&!ctx.id;ri++){
-    var rs=resolvers[ri];
+  for(var i=0;i<mirrors.length&&!id;i++){
     try{
-      L('Trying '+rs.name+'…');
-      var r=await fetchT(rs.url,{},10000);
-      var body, fin='';
-      if(rs.json){ var j=await r.json(); body=typeof j.contents==='string'?j.contents:''; fin=(j.status&&j.status.url)||''; }
+      var r=await fetchT(mirrors[i].u,{},9000,sig), body='', fin='';
+      if(mirrors[i].json){ var jj=await r.json(); body=typeof jj.contents==='string'?jj.contents:''; fin=(jj.status&&jj.status.url)||''; }
       else body=await r.text();
-      var mm=(fin.match(/\/pin\/(\d{5,})/))||(body&&body.match(/\/pin\/(\d{5,})/));
-      if(mm){ ctx.id=mm[1]; ctx.page=body||null; L(rs.name+' worked. Pin id '+ctx.id); }
-      else L(rs.name+' replied but no pin number was in it.');
-    }catch(e){ L(rs.name+' failed: '+errText(e)); }
+      id=extractPinId(fin)||extractPinId(body);
+    }catch(e){ if(sig.aborted) throw e; }
   }
-  if(!ctx.id) L('Could not look up the short link. Paste the full address instead: open the pin in Chrome, copy the address that looks like pinterest.com/pin/123456789…, and run again.');
-  return ctx;
+  return id;
 }
 
-/* ───── the tests ───── */
-function widgetUrls(id){
-  return [
-    'https://widgets.pinterest.com/v3/pidgets/pins/info/?pin_ids='+id,
-    'https://api.pinterest.com/v3/pidgets/pins/info/?pin_ids='+id
-  ];
-}
-var TESTS=[
-  { id:'direct-fetch', title:'A. Straight from the browser (widget data)',
-    desc:'Phone asks Pinterest directly. No server, no cost, uses the visitor\'s own address.',
-    run:async function(ctx,L){
-      if(!ctx.id){ return {status:'skip',summary:'Needs a pin id'}; }
-      var urls=widgetUrls(ctx.id), best=null, i;
-      for(i=0;i<urls.length;i++){
-        L('GET '+urls[i]);
-        try{
-          var r=await fetchT(urls[i],{credentials:'omit'},12000);
-          L('HTTP '+r.status);
-          var txt=await r.text();
-          L('Reply: '+txt.length+' characters');
-          var res=await judge(findMedia(txt),L);
-          if(!best||rank(res)>rank(best)) best=res;
-          if(res.status==='pass') break;
-        }catch(e){ L('Failed: '+errText(e)); }
+/* ═════ fallbacks when the direct request gives nothing ═════ */
+async function fallbackLookup(id,sig){
+  var pinUrl='https://www.pinterest.com/pin/'+id+'/', base=workerBase(), poster=null;
+  if(base){
+    try{
+      var j=await fetchJson(base+'?url='+enc(pinUrl),sig,15000);
+      if(j.type==='video'&&j.url){
+        var alts=(j.videos||[j.url]).map(safeHttps).filter(Boolean);
+        var m=buildVideo(alts.map(function(u){ return { url:u, w:0, h:0 }; }),[],{ title:j.title||'', pinId:id, source:'helper' });
+        if(m) return { media:m, verified:true };
       }
-      return best||{status:'fail',summary:'Blocked by the browser or network'};
-    }},
-  { id:'jsonp', title:'B. Straight from the browser (script-tag trick)',
-    desc:'Same widget data loaded the old JSONP way, which browsers do not block like normal requests.',
-    run:function(ctx,L){
-      if(!ctx.id) return Promise.resolve({status:'skip',summary:'Needs a pin id'});
-      var urls=widgetUrls(ctx.id), idx=0;
-      function one(){
-        return new Promise(function(resolve){
-          var name='__pinjsonp'+Date.now()+idx, s=document.createElement('script'), done=false;
-          function fin(v){ if(done) return; done=true; clearTimeout(t); try{delete window[name];}catch(e){window[name]=undefined;} if(s.parentNode) s.parentNode.removeChild(s); resolve(v); }
-          var t=setTimeout(function(){ L('Timed out'); fin(null); },10000);
-          window[name]=function(data){ fin(data); };
-          s.onerror=function(){ L('Script failed to load'); fin(null); };
-          s.src=urls[idx]+'&callback='+name;
-          L('Script '+s.src);
-          document.head.appendChild(s);
-        });
-      }
-      return (async function(){
-        var best=null;
-        for(idx=0;idx<urls.length;idx++){
-          var data=await one();
-          if(data){ var txt=JSON.stringify(data); L('Reply: '+txt.length+' characters'); var res=await judge(findMedia(txt),L); if(!best||rank(res)>rank(best)) best=res; if(res.status==='pass') break; }
-        }
-        return best||{status:'fail',summary:'No usable reply'};
-      })();
-    }},
-  { id:'resource-direct', title:'C. Straight from the browser (full pin data)',
-    desc:'Pinterest\'s own pin data request, called directly. Usually blocked, tested for completeness.',
-    run:async function(ctx,L){
-      if(!ctx.id) return {status:'skip',summary:'Needs a pin id'};
-      var api='https://www.pinterest.com/resource/PinResource/get/?source_url='+enc('/pin/'+ctx.id+'/')+'&data='+enc(JSON.stringify({options:{id:String(ctx.id),field_set_key:'detailed'},context:{}}));
-      L('GET PinResource');
-      try{
-        var r=await fetchT(api,{credentials:'omit',headers:{'X-Requested-With':'XMLHttpRequest'}},12000);
-        L('HTTP '+r.status);
-        return await judge(findMedia(await r.text()),L);
-      }catch(e){ L('Failed: '+errText(e)); return {status:'fail',summary:'Blocked by the browser or network'}; }
-    }},
-  { id:'mirror-page', title:'D. Public mirror fetches the pin page',
-    desc:'What the old Pinsave did. Free, but Pinterest tends to treat mirrors as bots.',
-    run:async function(ctx,L){
-      var page=ctx.page;
-      if(!page){
-        L('Asking AllOrigins for the page…');
-        try{ var r=await fetchT('https://api.allorigins.win/get?url='+enc(ctx.input),{},16000); var j=await r.json(); page=typeof j.contents==='string'?j.contents:''; }
-        catch(e){ L('Failed: '+errText(e)); return {status:'fail',summary:'Mirror unreachable'}; }
-      }else L('Using the page fetched while resolving the link.');
-      L('Page length: '+page.length+' characters');
-      var m=findMedia(page);
-      var res=await judge(m,L);
-      if(res.status==='partial'&&!m.hint) res.summary='Image only (Pinterest may have hidden the video markers from this mirror)';
-      return res;
-    }},
-  { id:'mirror-api', title:'E. Public mirror fetches the pin data',
-    desc:'Two more mirrors asking Pinterest\'s data request on your behalf.',
-    run:async function(ctx,L){
-      if(!ctx.id) return {status:'skip',summary:'Needs a pin id'};
-      var api='https://www.pinterest.com/resource/PinResource/get/?source_url='+enc('/pin/'+ctx.id+'/')+'&data='+enc(JSON.stringify({options:{id:String(ctx.id),field_set_key:'detailed'},context:{}}));
-      var mirrors=['https://api.codetabs.com/v1/proxy?quest='+enc(api),'https://api.allorigins.win/raw?url='+enc(api)], best=null, i;
-      for(i=0;i<mirrors.length;i++){
-        L('Mirror '+(i+1));
-        try{
-          var r=await fetchT(mirrors[i],{},14000); L('HTTP '+r.status);
-          var res=await judge(findMedia(await r.text()),L);
-          if(!best||rank(res)>rank(best)) best=res; if(res.status==='pass') break;
-        }catch(e){ L('Failed: '+errText(e)); }
-      }
-      return best||{status:'fail',summary:'Mirrors failed'};
-    }},
-  { id:'worker', title:'F. Your Cloudflare Worker',
-    desc:'Needs the optional Worker URL above. A small free server of your own.',
-    run:async function(ctx,L){
-      var w=($('worker').value||'').trim().replace(/\/+$/,'');
-      if(!w) return {status:'skip',summary:'No Worker URL entered'};
-      try{ var u=new URL(w); if(u.protocol!=='https:') throw 0; }catch(e){ return {status:'skip',summary:'Worker URL must start with https://'}; }
-      L('GET '+w+'?url=…');
-      try{
-        var r=await fetchT(w+'?url='+enc(ctx.input),{},20000);
-        L('HTTP '+r.status);
-        var j=await r.json();
-        L('Worker says: '+(j.type||j.error||'?')+(j.via?' (via '+j.via+')':''));
-        return await judge(findMedia(JSON.stringify(j)),L);
-      }catch(e){ L('Failed: '+errText(e)); return {status:'fail',summary:'Worker unreachable or blocked'}; }
-    }}
-];
-function rank(r){ return {pass:3,partial:2,fail:1,skip:0}[r.status]||0; }
-
-/* ───── UI ───── */
-var LABEL={pass:'Works',partial:'Partial',fail:'Failed',skip:'Skipped',run:'Testing'};
-var results={}, running=false;
-function buildList(){
-  var host=$('tests'); host.textContent='';
-  TESTS.forEach(function(t){
-    var el=document.createElement('div'); el.className='test'; el.id='t-'+t.id;
-    el.innerHTML='<div class="bar"></div><div class="test-head"><div class="test-body"><div class="test-title"></div><div class="test-desc"></div></div><span class="chip skip">Waiting</span></div><div class="log"></div>';
-    el.querySelector('.test-title').textContent=t.title;
-    el.querySelector('.test-desc').textContent=t.desc;
-    el.querySelector('.test-head').addEventListener('click',function(){ el.classList.toggle('open'); });
-    host.appendChild(el);
-  });
-}
-function setChip(id,kind,text){
-  var el=$('t-'+id), chip=el.querySelector('.chip');
-  chip.className='chip '+kind; chip.textContent=text;
-  el.classList.remove('pass','partial','fail','running');
-  if(kind==='run') el.classList.add('running'); else if(kind!=='skip') el.classList.add(kind);
-}
-function makeLogger(id){
-  var log=$('t-'+id).querySelector('.log'); log.textContent='';
-  return function(line){ log.textContent+=(log.textContent?'\n':'')+line; };
-}
-
-function buildReport(pinInput,ctx,order){
-  var lines=['PINSAVE ROUTE TEST','Time: '+new Date().toISOString(),'Page: '+location.protocol+'//'+(location.host||'(local file)'),
-    'Secure context: '+(window.isSecureContext?'yes':'no'),'Browser: '+navigator.userAgent,'Pin: '+pinInput,'Pin id: '+(ctx&&ctx.id||'unknown'),''];
-  order.forEach(function(t){
-    var r=results[t.id]||{status:'skip',summary:'not run'};
-    lines.push('['+(LABEL[r.status]||r.status).toUpperCase()+'] '+t.title+' — '+r.summary);
-    var log=$('t-'+t.id).querySelector('.log').textContent;
-    if(log) lines.push(log.split('\n').map(function(l){return '    '+l;}).join('\n'));
-  });
-  return lines.join('\n');
-}
-function showVerdict(){
-  var v=$('verdict'); v.hidden=false;
-  var direct=['direct-fetch','jsonp','resource-direct'].filter(function(k){return results[k]&&results[k].status==='pass';});
-  var w=results.worker&&results.worker.status==='pass';
-  var mirror=['mirror-page','mirror-api'].filter(function(k){return results[k]&&results[k].status==='pass';});
-  var cls='bad', h, p;
-  if(direct.length){
-    cls='good'; h='Best route found: straight from the visitor\'s browser';
-    var fetchable=direct.some(function(k){return results[k].fetchable;});
-    p='Pinterest gave a real, playable video to this device with no server at all. That is free and cannot be blocked by address.'+(fetchable?' In-page saving also works.':' Saving may still need a small helper, which I can add.');
-  }else if(w){
-    cls='good'; h='Your Cloudflare Worker works'; p='The free Worker returned a real playable video. We can build the site around it.';
-  }else if(mirror.length){
-    cls='good'; h='Only the public mirrors worked this time'; p='That route is unreliable and may stop working at any moment, but it can serve as a backup.';
-  }else{
-    h='No free route returned a playable video';
-    p='Next steps, in order: run again from an https page (GitHub Pages) if you opened this as a file; deploy the Worker below and test it; otherwise the answer is the home-phone or PC server, or the bookmarklet for people already on Pinterest.';
+      if(j.type==='image'&&safeHttps(j.url)) return { media:{ type:'image', url:safeHttps(j.url), title:j.title||'', pinId:id, source:'helper' }, verified:true };
+      if(j.type==='video-no-url'&&j.poster&&safeHttps(j.poster)) poster={ type:'image', url:safeHttps(j.poster), title:j.title||'', pinId:id, source:'helper' };
+    }catch(e){ if(sig.aborted) throw e; }
   }
-  v.className='verdict '+cls;
-  v.innerHTML='<h2></h2><p></p>'; v.querySelector('h2').textContent=h; v.querySelector('p').textContent=p;
-}
-
-async function runAll(){
-  if(running) return;
-  var input=($('pin').value||'').trim();
-  if(!input){ toast('Paste a Pinterest link first.'); $('pin').focus(); return; }
-  try{ localStorage.setItem('diag_worker',$('worker').value||''); }catch(e){}
-  running=true; results={};
-  var btn=$('run'); btn.disabled=true; btn.textContent='Testing…';
-  $('verdict').hidden=true; $('report-card').hidden=true;
-  buildList();
-  TESTS.forEach(function(t){ setChip(t.id,'skip','Waiting'); });
-
-  var ctx=null;
   try{
-    setChip('direct-fetch','run','Testing');
-    var L0=makeLogger('direct-fetch');
-    ctx=await resolvePin(input,L0);
-  }catch(e){
-    toast(e.message||'Invalid link');
-    running=false; btn.disabled=false; btn.textContent='Run all tests';
-    TESTS.forEach(function(t){ setChip(t.id,'skip','Waiting'); });
+    var jj=await fetchJson('https://api.allorigins.win/get?url='+enc(pinUrl),sig,12000);
+    var page=typeof jj.contents==='string'?jj.contents:'';
+    if(page){
+      var v=findVideosInText(page);
+      var vm=buildVideo(v.mp4.map(function(u){ return { url:safeHttps(u), w:0, h:0 }; }).filter(function(x){ return x.url; }),v.derived.map(safeHttps).filter(Boolean),{ title:titleFromText(normText(page)), pinId:id, source:'public helper' });
+      if(vm) return { media:vm, verified:true };
+      var im=imageFromText(page,'public helper');
+      if(im){ im.title=titleFromText(normText(page)); im.pinId=id; if(hasVideoHint(page)) poster=poster||im; else return { media:im, verified:false }; }
+    }
+  }catch(e){ if(sig.aborted) throw e; }
+  return { media:null, poster:poster };
+}
+
+/* ═════ UI helpers ═════ */
+function setStep(n){
+  clearTimeout(stepsTimer);
+  elSteps.hidden=false;
+  requestAnimationFrame(function(){ elSteps.classList.add('show'); });
+  var stepEls=elSteps.querySelectorAll('.step');
+  for(var i=0;i<stepEls.length;i++){
+    var k=parseInt(stepEls[i].getAttribute('data-step'),10);
+    stepEls[i].classList.toggle('active',k===n);
+    stepEls[i].classList.toggle('done',k<n);
+    stepEls[i].querySelector('.step-dot').textContent=(k<n)?'✓':String(k);
+  }
+  var lines=elSteps.querySelectorAll('.step-line');
+  for(var j=0;j<lines.length;j++) lines[j].classList.toggle('filled',n>j+1);
+}
+function hideSteps(){
+  elSteps.classList.remove('show');
+  clearTimeout(stepsTimer);
+  stepsTimer=setTimeout(function(){ elSteps.hidden=true; },400);
+}
+function live(msg,kind){
+  elLiveText.textContent=msg;
+  elLive.classList.add('show');
+  elLive.classList.toggle('done',kind==='done');
+  elLive.classList.toggle('warn',kind==='warn');
+}
+function startClock(){
+  stopClock(); t0=Date.now(); elLiveTime.textContent='0.0s';
+  clockTimer=setInterval(function(){ elLiveTime.textContent=((Date.now()-t0)/1000).toFixed(1)+'s'; },100);
+}
+function stopClock(){ if(clockTimer){ clearInterval(clockTimer); clockTimer=null; } }
+function setLoading(on){
+  state.busy=on;
+  elGoSpin.hidden=!on;
+  elGoIco.style.display=on?'none':'';
+  elGoLabel.textContent=on?'Working…':'Get it';
+}
+function showNotice(kind,msg,withRetry){
+  elNotice.className='notice '+kind;
+  elNoticeText.textContent=msg;
+  elRetry.hidden=!withRetry;
+  elNotice.hidden=false;
+}
+function hideNotice(){ elNotice.hidden=true; }
+function setSaveEnabled(on,label){
+  elSaveBtn.disabled=!on;
+  elSaveLabel.textContent=label||'Save to device';
+}
+function resetSaveBtn(){
+  state.saving=false;
+  elSaveBtn.classList.remove('indet');
+  elSaveFill.style.setProperty('--p','0%');
+  setSaveEnabled(!!state.media);
+}
+function setProgress(pct,label){
+  if(pct<0) elSaveBtn.classList.add('indet');
+  else{ elSaveBtn.classList.remove('indet'); elSaveFill.style.setProperty('--p',pct+'%'); }
+  if(label) elSaveLabel.textContent=label;
+}
+function resetResult(){
+  elResult.classList.remove('show');
+  elResult.hidden=true;
+  elPreview.textContent='';
+  elQRow.hidden=true; elQRow.textContent='';
+  elManual.hidden=true;
+  state.media=null; state.saving=false;
+  elSaveBtn.classList.remove('indet');
+  elSaveFill.style.setProperty('--p','0%');
+  setSaveEnabled(false);
+}
+var toastTimer=null;
+function toast(msg,type){
+  elToast.textContent=msg;
+  elToast.className='toast show '+(type||'');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){ elToast.classList.remove('show'); },4500);
+}
+function robustCopy(text,field){
+  function manual(){ if(field){ field.focus(); field.select(); try{ field.setSelectionRange(0,field.value.length); }catch(e){} } toast('Copy was blocked here. The link is selected: long-press it and choose Copy.',''); }
+  function legacy(){
+    var a=document.createElement('textarea');
+    a.value=text; a.setAttribute('readonly',''); a.style.cssText='position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(a); a.focus(); a.select();
+    try{ a.setSelectionRange(0,text.length); }catch(e){}
+    var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(a);
+    if(ok) toast('Copied.','success'); else manual();
+  }
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(text).then(function(){ toast('Copied.','success'); },legacy);
+  else legacy();
+}
+
+/* ═════ preview ═════ */
+function fileExt(media){
+  var m=String(media.url).split('?')[0].match(/\.(mp4|webm|mov|gif|jpg|jpeg|png|webp)$/i);
+  if(m) return m[1].toLowerCase().replace('jpeg','jpg');
+  return media.type==='video'?'mp4':'jpg';
+}
+function fileName(media){
+  var id=media.pinId||String(Date.now()).slice(-7);
+  return 'pinterest-'+id+'.'+fileExt(media);
+}
+function mountMedia(media){
+  elPreview.textContent='';
+  if(media.type==='video'){
+    var v=document.createElement('video');
+    v.controls=true; v.playsInline=true; v.muted=true; v.loop=true; v.autoplay=true;
+    v.setAttribute('playsinline','');
+    if(media.poster) v.poster=media.poster;
+    var idx=Math.max(0,media.alts.indexOf(media.url));
+    v.addEventListener('error',function(){
+      idx++;
+      if(idx<media.alts.length){ media.url=media.alts[idx]; v.src=media.url; }
+    });
+    v.src=media.url;
+    elPreview.appendChild(v);
+  }else{
+    var img=document.createElement('img');
+    img.alt='Preview of the pin';
+    img.referrerPolicy='no-referrer';
+    var orig=media.url;
+    /* resized JPG/PNG/WebP -> original; a GIF address is already the real animation */
+    var up=/\.gif(\?|$)/i.test(orig)?orig:String(orig).replace(/\/(1200x|736x|564x|474x|236x|170x)\//,'/originals/');
+    if(up!==orig){ img.onerror=function(){ img.onerror=null; media.url=orig; img.src=orig; }; media.url=up; img.src=up; }
+    else img.src=orig;
+    elPreview.appendChild(img);
+  }
+}
+function buildQuality(media){
+  elQRow.textContent='';
+  var vs=media.variants||[];
+  if(media.type!=='video'||vs.length<2){ elQRow.hidden=true; return; }
+  var lab=document.createElement('span'); lab.textContent='Quality'; elQRow.appendChild(lab);
+  vs.forEach(function(v,i){
+    var b=document.createElement('button'); b.type='button'; b.className='q'+(v.url===media.url?' on':''); b.textContent=v.label;
+    b.addEventListener('click',function(){
+      media.url=v.url;
+      media.alts=[v.url].concat(media.alts.filter(function(u){ return u!==v.url; }));
+      var vid=elPreview.querySelector('video'); if(vid){ vid.src=v.url; vid.play&&vid.play().catch(function(){}); }
+      var all=elQRow.querySelectorAll('.q'); for(var k=0;k<all.length;k++) all[k].classList.toggle('on',all[k]===b);
+      elManual.hidden=true;
+    });
+    elQRow.appendChild(b);
+  });
+  elQRow.hidden=false;
+}
+/* opts: { chip, kind ('ok'|'warn') } */
+function showMedia(media,opts){
+  opts=opts||{};
+  state.media=media;
+  elManual.hidden=true;
+  mountMedia(media);
+  var chip=document.createElement('span');
+  chip.className='type-chip '+(opts.kind||'');
+  var gif=fileExt(media)==='gif';
+  chip.textContent=opts.chip||(media.type==='video'?'Video':(gif?'GIF':'Image'));
+  elPreview.appendChild(chip);
+  elTitle.textContent=media.title||(media.type==='video'?'Pinterest video':(gif?'Pinterest GIF':'Pinterest image'));
+  var bits=[];
+  if(media.pinId) bits.push('Pin #'+media.pinId);
+  if(media.author) bits.push('by '+media.author);
+  if(media.source) bits.push('via '+media.source);
+  elSub.textContent=bits.join(' · ');
+  buildQuality(media);
+  resetSaveBtn();
+  elResult.hidden=false;
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ elResult.classList.add('show'); }); });
+  setTimeout(function(){ try{ elResult.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(e){} },150);
+}
+
+/* ═════ main flow ═════ */
+async function run(url){
+  if(current){ try{ current.abort(); }catch(e){} }
+  var ctrl=new AbortController(); current=ctrl;
+  var sig=ctrl.signal;
+  state.lastUrl=url;
+  hideNotice(); resetResult(); setLoading(true); startClock(); setStep(1);
+
+  try{
+    var id=extractPinId(url);
+    if(!id){
+      live('Looking up the short link…');
+      id=await resolveShort(url,sig);
+      if(sig.aborted) return;
+      if(!id){
+        stopClock(); elLive.classList.remove('show'); hideSteps();
+        showNotice('err','We couldn’t read that short link. Open it in Chrome, copy the address that looks like pinterest.com/pin/123…, and paste that instead.',true);
+        return;
+      }
+    }
+    setStep(2);
+    live('Asking Pinterest for the media…');
+
+    var res=null, poster=null;
+    try{
+      var j;
+      try{ j=await widgetFetch(id,sig); }
+      catch(e){ if(sig.aborted) return; j=await widgetJsonp(id,sig); }
+      var m=parseWidget(j,id);
+      if(m.type==='video-blocked') poster=m.poster; else res={ media:m, verified:true };
+    }catch(e){ if(sig.aborted) return; }
+
+    if(!res){
+      live('Trying backup routes…');
+      var fb=await fallbackLookup(id,sig);
+      if(sig.aborted) return;
+      if(fb.media) res={ media:fb.media, verified:fb.verified };
+      else poster=poster||fb.poster;
+    }
+    if(!res&&poster) res={ media:poster, verified:true, posterOnly:true };
+    if(!res) throw new Error('no-media');
+
+    var media=res.media;
+    media.pinId=media.pinId||id;
+    var secs=((Date.now()-t0)/1000).toFixed(1);
+    stopClock(); setStep(3);
+
+    if(res.posterOnly){
+      showMedia(media,{ chip:'Video pin · poster only', kind:'warn' });
+      live('Only the poster image could be reached','warn');
+      showNotice('warn','This is a video pin, but Pinterest only returned the poster image this time. Tap Retry or try again in a minute. You can still save the poster.',true);
+    }else if(!res.verified){
+      showMedia(media,{ chip:'Preview image', kind:'warn' });
+      live('Preview ready, but we couldn’t confirm whether this pin also has a video','warn');
+      showNotice('warn','We could only get an image for this pin. If it should be a video, tap Retry.',true);
+    }else{
+      showMedia(media,{ kind:'ok' });
+      live('Ready in '+secs+'s','done');
+    }
+  }catch(err){
+    if(sig.aborted) return;
+    stopClock(); elLive.classList.remove('show'); hideSteps(); resetResult();
+    showNotice('err','Couldn’t get anything for that pin right now. Make sure the pin is public, then tap Retry.',true);
+    toast('Couldn’t fetch that pin','error');
+  }finally{
+    if(current===ctrl){ setLoading(false); current=null; }
+  }
+}
+
+/* ═════ events ═════ */
+elForm.addEventListener('submit',function(e){
+  e.preventDefault();
+  var target=validateUrl(elInput.value);
+  if(!target){
+    elInputWrap.classList.add('shake');
+    setTimeout(function(){ elInputWrap.classList.remove('shake'); },600);
+    showNotice('err','That doesn’t look like a Pinterest link. Paste a “pin.it/…” or “pinterest.com/pin/…” link.',false);
     return;
   }
-  if(!ctx.id) toast('Could not read the pin number from the short link. Most tests will be skipped. Try the full pinterest.com/pin/… address.');
-  for(var i=0;i<TESTS.length;i++){
-    var t=TESTS[i], L=(t.id==='direct-fetch')?function(line){ var lg=$('t-direct-fetch').querySelector('.log'); lg.textContent+=(lg.textContent?'\n':'')+line; }:makeLogger(t.id);
-    setChip(t.id,'run','Testing');
-    var res;
-    try{ res=await t.run(ctx,L); }catch(e){ res={status:'fail',summary:'Test crashed: '+errText(e)}; L(res.summary); }
-    results[t.id]=res;
-    setChip(t.id,res.status==='skip'?'skip':res.status,LABEL[res.status]);
-    var el=$('t-'+t.id); var s=document.createElement('div'); s.className='test-desc'; s.style.color='#e8e2fb'; s.textContent=res.summary;
-    var old=el.querySelector('.sum'); if(old) old.remove(); s.classList.add('sum'); el.querySelector('.test-body').appendChild(s);
-    if(res.status==='pass') el.classList.add('open');
+  run(target);
+});
+elInput.addEventListener('paste',function(){
+  setTimeout(function(){ var t=validateUrl(elInput.value); if(t) run(t); },200);
+});
+elRetry.addEventListener('click',function(){ if(state.lastUrl) run(state.lastUrl); });
+elPaste.addEventListener('click',function(){
+  if(navigator.clipboard&&navigator.clipboard.readText){
+    navigator.clipboard.readText().then(function(t){
+      if(!t){ toast('Clipboard is empty.',''); return; }
+      elInput.value=t.trim();
+      var target=validateUrl(t);
+      if(target) run(target); else toast('That doesn’t look like a Pinterest link.','error');
+    }).catch(function(){ elInput.focus(); toast('Your browser blocked clipboard access. Long-press the box and tap Paste.',''); });
+  }else{ elInput.focus(); toast('Long-press the box and tap Paste.',''); }
+});
+elNewBtn.addEventListener('click',function(){
+  if(current){ try{ current.abort(); }catch(e){} current=null; setLoading(false); stopClock(); }
+  resetResult(); hideNotice(); elLive.classList.remove('show'); hideSteps();
+  elInput.value=''; elInput.focus();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* Opening Pinsave from a share link (?url=… or ?text=…) starts straight away */
+(function(){
+  try{
+    var q=new URLSearchParams(location.search);
+    var v=q.get('url')||q.get('u')||q.get('text');
+    var t=v&&validateUrl(v);
+    if(t){ elInput.value=t; setTimeout(function(){ run(t); },400); }
+  }catch(e){}
+})();
+
+/* ═════ owner setup panel (#setup) ═════ */
+function checkSetup(){
+  var on=/(^|[#&?])setup$/.test(location.hash)||/[?&]setup(&|=|$)/.test(location.search);
+  elSetup.hidden=!on;
+  if(on){ elWorkerSrc.value=($('worker-template').textContent||'').trim(); elWorkerUrl.value=store.get('pinsave_backend'); }
+}
+checkSetup();
+window.addEventListener('hashchange',checkSetup);
+$('copy-worker').addEventListener('click',function(){ robustCopy(elWorkerSrc.value,elWorkerSrc); });
+$('connect-worker').addEventListener('click',function(){
+  var v=elWorkerUrl.value.trim().replace(/\/+$/,'');
+  if(!safeHttps(v)){ toast('Enter a valid https:// address.','error'); return; }
+  store.set('pinsave_backend',v); toast('Helper connected.','success');
+});
+$('clear-worker').addEventListener('click',function(){ store.set('pinsave_backend',''); elWorkerUrl.value=''; toast('Helper removed.',''); });
+
+/* ═════ SAVE ═════ */
+async function tryBlob(url,onProgress,timeoutMs){
+  var ctrl=new AbortController();
+  var timer=setTimeout(function(){ try{ ctrl.abort(); }catch(e){} },timeoutMs||20000);
+  try{
+    var res=await fetch(url,{signal:ctrl.signal});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var chunks=[], received=0, total=parseInt(res.headers.get('content-length')||'0',10);
+    if(res.body&&res.body.getReader){
+      var rd=res.body.getReader();
+      for(;;){ var r=await rd.read(); if(r.done) break; chunks.push(r.value); received+=r.value.length; onProgress(received,total); }
+    }else{ var b=await res.blob(); chunks=[b]; received=b.size; onProgress(received,received); }
+    var ctype=res.headers.get('content-type')||'';
+    if(ctype.indexOf('text/html')!==-1||ctype.indexOf('json')!==-1) throw new Error('not a file');
+    var blob=new Blob(chunks,{type:ctype||undefined});
+    if(blob.size<300) throw new Error('too small');
+    return blob;
+  }finally{ clearTimeout(timer); }
+}
+function typedBlob(blob,media){
+  if(blob.type&&blob.type!=='application/octet-stream') return blob;
+  var map={mp4:'video/mp4',webm:'video/webm',mov:'video/quicktime',gif:'image/gif',jpg:'image/jpeg',png:'image/png',webp:'image/webp'};
+  return new Blob([blob],{type:map[fileExt(media)]||'application/octet-stream'});
+}
+function triggerDownload(href,name,revoke){
+  var a=document.createElement('a');
+  a.href=href; a.download=name; a.rel='noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+  if(revoke) setTimeout(function(){ URL.revokeObjectURL(href); },60000);
+}
+function showManual(media){
+  var isVid=media.type==='video';
+  elManualText.textContent=isVid
+    ? 'Your browser doesn’t let this page save videos from Pinterest directly. Tap Open file, then tap the three dots on the player and choose Download, or long-press the video and choose Download video.'
+    : 'Your browser doesn’t let this page save this file directly. Tap Open file, then long-press the image and choose Download image.';
+  elOpenFile.href=media.url;
+  elLinkField.value=media.url;
+  elShareLink.hidden=!navigator.share;
+  elManual.hidden=false;
+  try{ elManual.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(e){}
+}
+elSaveBtn.addEventListener('click',async function(){
+  var media=state.media;
+  if(!media||elSaveBtn.disabled||state.saving) return;
+  state.saving=true;
+  setSaveEnabled(false,'Saving…'); setProgress(-1,'Saving…');
+  elManual.hidden=true;
+  var name=fileName(media);
+
+  /* 1) save from inside the page, when the browser allows it */
+  try{
+    var blob=typedBlob(await tryBlob(media.url,function(recv,total){
+      var mb=(recv/1048576).toFixed(1);
+      if(total) setProgress(Math.min(99,Math.round(recv/total*100)),'Saving '+mb+' MB…'); else setProgress(-1,'Saving '+mb+' MB…');
+    },20000),media);
+    if(state.media!==media) return;
+    triggerDownload(URL.createObjectURL(blob),name,true);
+    setProgress(100,'Saved');
+    toast('Download started. Check your Downloads or Files app.','success');
+    setTimeout(function(){ if(state.media===media) resetSaveBtn(); },2400);
+    return;
+  }catch(e){ /* not allowed, try the helper */ }
+  if(state.media!==media) return;
+
+  /* 2) the helper, which serves the file as a download */
+  var wb=workerBase();
+  if(wb){
+    triggerDownload(wb+'/dl?u='+enc(media.url)+'&name='+enc(name),name,false);
+    setProgress(100,'Started');
+    toast('Download started in your browser’s download manager.','success');
+    setTimeout(function(){ if(state.media===media) resetSaveBtn(); },2400);
+    return;
   }
-  showVerdict();
-  $('report').value=buildReport(input,ctx,TESTS);
-  $('report-card').hidden=false;
-  $('verdict').scrollIntoView({behavior:'smooth',block:'nearest'});
-  running=false; btn.disabled=false; btn.textContent='Run again';
+
+  /* 3) honest fallback: one extra tap */
+  resetSaveBtn();
+  showManual(media);
+});
+elCopyLink.addEventListener('click',function(){ robustCopy(elLinkField.value,elLinkField); });
+elLinkField.addEventListener('focus',function(){ elLinkField.select(); });
+elShareLink.addEventListener('click',function(){
+  if(!navigator.share) return;
+  navigator.share({ url:elLinkField.value, title:'Pinterest file' }).catch(function(){});
+});
+
+/* ═════ ticker + reveal ═════ */
+var items=[['Videos','--red'],['Images','--violet'],['GIFs','--cyan'],['pin.it links','--amber'],['No signup','--green'],['Original quality','--pink'],['Works on mobile','--lime']];
+var tk='';
+for(var g=0;g<2;g++){ for(var ti=0;ti<items.length;ti++) tk+='<span style="--c:var('+items[ti][1]+')">'+items[ti][0]+'<b>✦</b></span>'; }
+$('ticker-track').innerHTML=tk;
+
+var srs=document.querySelectorAll('.sr');
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  },{threshold:0.1});
+  for(var s=0;s<srs.length;s++) io.observe(srs[s]);
+}else{
+  for(var a2=0;a2<srs.length;a2++) srs[a2].classList.add('in');
 }
 
-$('run').addEventListener('click',runAll);
-$('pin').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); runAll(); } });
-$('copy-report').addEventListener('click',function(){ robustCopy($('report').value,$('report')); });
-$('copy-worker').addEventListener('click',function(){ robustCopy($('worker-src').value,$('worker-src')); });
-buildList();
 })();
 </script>
 </body>
